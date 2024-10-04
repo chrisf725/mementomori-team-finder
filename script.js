@@ -144,20 +144,20 @@ Object.entries(characterNames).forEach(([id, name]) => {
     }
 });
 
-dropdown.addEventListener('change', () => {
-    // updateSelectedCharacterDisplay();
-    const temp = [];
-    const selectedOptions = Array.from(dropdown.selectedOptions);
-    const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
+// dropdown.addEventListener('change', () => {
+//     // updateSelectedCharacterDisplay();
+//     const temp = [];
+//     const selectedOptions = Array.from(dropdown.selectedOptions);
+//     const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
 
-    for (let i = 0; i < click; i++) {
-        temp.push(selectedCharacterIds.at(0));
-    }
+//     for (let i = 0; i < click; i++) {
+//         temp.push(selectedCharacterIds.at(0));
+//     }
 
-    // selectedCharactersDiv.innerHTML = `<strong>Selected Characters:</strong> ${selectedCharacterNames.join(', ')}`;
-    console.log('Selected character IDs:', selectedCharacterIds);
-    console.log('Temp:', temp);
-});
+//     // selectedCharactersDiv.innerHTML = `<strong>Selected Characters:</strong> ${selectedCharacterNames.join(', ')}`;
+//     console.log('Selected character IDs:', selectedCharacterIds);
+//     console.log('Temp:', temp);
+// });
 
 document.getElementById('getTeam').addEventListener('click', async () => {
     const selectedOptions = Array.from(dropdown.selectedOptions);
@@ -168,12 +168,63 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('https://api.mentemori.icu/wg/24/legend/latest');
-        if (!response.ok) {
-            throw new Error(`HTTP error, status = ${response.status}`);
+    const urls = [];
+    const KR = document.getElementById('KR').checked;
+    const ASIA = document.getElementById('ASIA').checked;
+    const NA = document.getElementById('NA').checked;
+    const EU = document.getElementById('EU').checked;
+    const GLB = document.getElementById('GLB').checked;
+    const JP = document.getElementById('JP').checked;
+
+    if (KR) {
+        for (let i = 18; i <= 19; i++) {
+            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
         }
-        const data = await response.json();
+    }
+
+    if (ASIA) {
+        for (let i = 21; i <= 22; i++) {
+            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+        }
+    }
+
+    if (NA) {
+        for (let i = 23; i <= 24; i++) {
+            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+        }
+    }
+
+    if (EU) {
+        for (let i = 25; i <= 25; i++) {
+            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+        }
+    }
+
+    if (GLB) {
+        for (let i = 26; i <= 27; i++) {
+            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+        }
+    }
+
+    if (JP) {
+        for (let i = 37; i <= 66; i++) {
+            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+        }
+    }
+
+    try {
+        // const response = await fetch('https://api.mentemori.icu/wg/37/legend/latest');
+        const responses = await Promise.all(urls.map(url => fetch(url)));
+        const data = await Promise.all(responses.map(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error, status = ${response.status}`);
+            }
+            return response.json();
+        }));
+        // if (!response.ok) {
+        //     throw new Error(`HTTP error, status = ${response.status}`);
+        // }
+        // const data = await response.json();
 
         console.log(data);
 
@@ -202,17 +253,30 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         // });
 
         const targetCharacterIds = [parseInt(selectedCharacterIds)];
-        data.data.forEach(player => {
-            const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
-            if (selectedCharacterIds.every(id => characterIds.includes(id))) {
-                console.log(player.PlayerName);
-                player.UserCharacterInfoList.forEach(info => {
-                    const characterName = characterNames[info.CharacterId] || 'Unknown Character';
-                    const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
-                    console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
-                });
-            }
-        });
+        data.forEach(apiData => {
+            apiData.data.forEach(player => {
+                const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
+                if (selectedCharacterIds.every(id => characterIds.includes(id))) {
+                    console.log(player.PlayerName);
+                    player.UserCharacterInfoList.forEach(info => {
+                        const characterName = characterNames[info.CharacterId] || 'Unknown Character';
+                        const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
+                        console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
+                    });
+                }
+            });
+        })
+        // data.data.forEach(player => {
+        //     const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
+        //     if (selectedCharacterIds.every(id => characterIds.includes(id))) {
+        //         console.log(player.PlayerName);
+        //         player.UserCharacterInfoList.forEach(info => {
+        //             const characterName = characterNames[info.CharacterId] || 'Unknown Character';
+        //             const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
+        //             console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
+        //         });
+        //     }
+        // });
 
     } catch (error) {
         console.error('Error fetching team:', error);
