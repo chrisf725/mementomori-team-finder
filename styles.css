@@ -1,23 +1,4 @@
-.dropdown-container {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #912a2a;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content div {
-    margin: 5px;
-    padding: 5px;
-    cursor: pointer;
-}
-
-.dropdown-container.show .dropdown-content {
-    display: block;
+#characterImage {
+    width: 75px;
+    height: 75px;
 }
