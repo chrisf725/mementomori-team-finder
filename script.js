@@ -258,6 +258,7 @@ dropdown.addEventListener('change', () => {
 document.getElementById('getTeam').addEventListener('click', async () => {
     const selectedOptions = Array.from(dropdown.selectedOptions);
     const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
+    // console.log()
 
     if (selectedCharacterIds.length === 0) {
         alert('Please select at least one character');
@@ -355,7 +356,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                 if (selectedCharacterIds.every(id => characterIds.includes(id))) {
                     console.log(player.PlayerName);
                     player.UserCharacterInfoList.forEach(info => {
-                        const characterName = characterNames[info.CharacterId] || 'Unknown Character';
+                        const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
                         const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
                         console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
                     });
