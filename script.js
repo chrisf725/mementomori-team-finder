@@ -100,6 +100,7 @@ const generateImageURL = (id) => {
     const paddedId = String(id).padStart(6, '0');
     return `https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Assets/Characters/Sprites/CHR_${paddedId}_00_s.png`;
 }
+
 const characterNames = {
     1: {name: 'Monica', imageURL: generateImageURL(1)},
     2: {name: 'Illya', imageURL: generateImageURL(2)},
@@ -269,6 +270,8 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     }
 
     const urls = [];
+    const LL = document.getElementById('LL').checked;
+    const BL = document.getElementById('BL').checked;
     const KR = document.getElementById('KR').checked;
     const ASIA = document.getElementById('ASIA').checked;
     const NA = document.getElementById('NA').checked;
@@ -276,41 +279,85 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     const GLB = document.getElementById('GLB').checked;
     const JP = document.getElementById('JP').checked;
 
-    if (KR) {
-        for (let i = 18; i <= 19; i++) {
-            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+    if (LL) {
+        if (KR) {
+            for (let i = 19; i <= 20; i++) {
+                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+            }
+        }
+    
+        if (ASIA) {
+            for (let i = 21; i <= 22; i++) {
+                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+            }
+        }
+    
+        if (NA) {
+            for (let i = 23; i <= 24; i++) {
+                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+            }
+        }
+    
+        if (EU) {
+            for (let i = 25; i <= 25; i++) {
+                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+            }
+        }
+    
+        if (GLB) {
+            for (let i = 26; i <= 27; i++) {
+                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+            }
+        }
+    
+        if (JP) {
+            for (let i = 37; i <= 66; i++) {
+                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+            }
         }
     }
 
-    if (ASIA) {
-        for (let i = 21; i <= 22; i++) {
-            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+    // Need to update every time a new world is added
+    if (BL) {
+        if (JP) {
+            for (let i = 1; i <= 131; i++) {
+                const paddedId = String(i).padStart(3, '0');
+                urls.push(`https://api.mentemori.icu/1${paddedId}/arena/latest`);
+            }
+        }
+        if (KR) {
+            for (let i = 1; i <= 18; i++) {
+                const paddedId = String(i).padStart(3, '0');
+                urls.push(`https://api.mentemori.icu/2${paddedId}/arena/latest`);
+            }
+        }
+        if (ASIA) {
+            for (let i = 1; i <= 18; i++) {
+                const paddedId = String(i).padStart(3, '0');
+                urls.push(`https://api.mentemori.icu/3${paddedId}/arena/latest`);
+            }
+        }
+        if (NA) {
+            for (let i = 1; i <= 20; i++) {
+                const paddedId = String(i).padStart(3, '0');
+                urls.push(`https://api.mentemori.icu/4${paddedId}/arena/latest`);
+            }
+        }
+        if (EU) {
+            for (let i = 1; i <= 9; i++) {
+                const paddedId = String(i).padStart(3, '0');
+                urls.push(`https://api.mentemori.icu/5${paddedId}/arena/latest`);
+            }
+        }
+        if (GLB) {
+            for (let i = 1; i <= 25; i++) {
+                const paddedId = String(i).padStart(3, '0');
+                urls.push(`https://api.mentemori.icu/6${paddedId}/arena/latest`);
+            }
         }
     }
 
-    if (NA) {
-        for (let i = 23; i <= 24; i++) {
-            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-        }
-    }
 
-    if (EU) {
-        for (let i = 25; i <= 25; i++) {
-            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-        }
-    }
-
-    if (GLB) {
-        for (let i = 26; i <= 27; i++) {
-            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-        }
-    }
-
-    if (JP) {
-        for (let i = 37; i <= 66; i++) {
-            urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-        }
-    }
 
     try {
         // const response = await fetch('https://api.mentemori.icu/wg/37/legend/latest');
@@ -368,67 +415,60 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         });
         thead.appendChild(tr);
 
+        // Use a Set to track unique players
+        const uniquePlayers = new Set();
+
         data.forEach(apiData => {
             apiData.data.forEach(player => {
-                const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
-                if (selectedCharacterIds.every(id => characterIds.includes(id))) {
-                    console.log(player.PlayerName);
+                /*
+                    Unique identifier found through character equipment
+                */
+                if (!uniquePlayers.has(player.UserCharacterInfoList[0].UserEquipmentDtoInfos[0]?.PlayerId)) {
+                    uniquePlayers.add(player.UserCharacterInfoList[0].UserEquipmentDtoInfos[0]?.PlayerId);
 
-                    const tr = document.createElement('tr');
+                    const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
+                    if (selectedCharacterIds.every(id => characterIds.includes(id))) {
+                        console.log(player.PlayerName);
+                        console.log(player.UserCharacterInfoList[0].UserEquipmentDtoInfos[0].PlayerId);
 
-                    const playerNameTd = document.createElement('td');
-                    playerNameTd.textContent = player.PlayerName;
-                    tr.appendChild(playerNameTd);
+                        const tr = document.createElement('tr');
 
-                    const teamTd = document.createElement('td');
-                    player.UserCharacterInfoList.forEach(info => {
-                        const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
-                        const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
-                        console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
+                        const playerNameTd = document.createElement('td');
+                        playerNameTd.textContent = player.PlayerName;
+                        tr.appendChild(playerNameTd);
 
-                        const characterDiv = document.createElement('div');
-                        characterDiv.className = 'character-container'
+                        const teamTd = document.createElement('td');
+                        player.UserCharacterInfoList.forEach(info => {
+                            const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
+                            const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
+                            console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
 
-                        const rarityDiv = document.createElement('div');
-                        rarityDiv.textContent = characterRarity;
-                        characterDiv.appendChild(rarityDiv);
+                            const characterDiv = document.createElement('div');
+                            characterDiv.className = 'character-container'
 
-                        const nameDiv = document.createElement('div');
-                        nameDiv.textContent = characterName;
-                        characterDiv.appendChild(nameDiv);
+                            const rarityDiv = document.createElement('div');
+                            rarityDiv.textContent = characterRarity;
+                            characterDiv.appendChild(rarityDiv);
 
-                        const levelDiv = document.createElement('div');
-                        levelDiv.textContent = `Lv. ${info.Level}`;
-                        characterDiv.appendChild(levelDiv);
+                            const nameDiv = document.createElement('div');
+                            nameDiv.textContent = characterName;
+                            characterDiv.appendChild(nameDiv);
 
-                        const img = document.createElement('img');
-                        img.src = characterNames[info.CharacterId]?.imageURL;
-                        img.alt = characterName;
-                        characterDiv.appendChild(img);
+                            const levelDiv = document.createElement('div');
+                            levelDiv.textContent = `Lv. ${info.Level}`;
+                            characterDiv.appendChild(levelDiv);
 
-                        teamTd.appendChild(characterDiv);
+                            const img = document.createElement('img');
+                            img.src = characterNames[info.CharacterId]?.imageURL;
+                            img.alt = characterName;
+                            characterDiv.appendChild(img);
 
-                        // const playerNameTd = document.createElement('td');
-                        // playerNameTd.textContent = player.PlayerName;
-                        // tr.appendChild(playerNameTd);
+                            teamTd.appendChild(characterDiv);
+                        });
 
-                        // const characterNameTd = document.createElement('td');
-                        // characterNameTd.textContent = characterName;
-                        // tr.appendChild(characterNameTd);
-
-                        // const levelTd = document.createElement('td');
-                        // levelTd.textContent = info.Level;
-                        // tr.appendChild(levelTd);
-
-                        // const rarityTd = document.createElement('td');
-                        // rarityTd.textContent = characterRarity;
-                        // tr.appendChild(rarityTd);
-
-                        // tbody.appendChild(tr);
-                    });
-
-                    tr.appendChild(teamTd);
-                    tbody.appendChild(tr);
+                        tr.appendChild(teamTd);
+                        tbody.appendChild(tr);
+                    }
                 }
             });
         })
