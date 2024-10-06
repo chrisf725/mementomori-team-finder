@@ -141,16 +141,16 @@ const characterNames = {
     38: {name: 'Olivia', imageURL: generateImageURL(38)},
     39: {name: 'Primavera', imageURL: generateImageURL(39)},
     40: {name: 'Carol', imageURL: generateImageURL(40)},
-    41: {name: '[The Witch of Mourning Flowers] Natasha', imageURL: generateImageURL(41)},
-    42: {name: '[The Witch of Sacred Swords] Fortina', imageURL: generateImageURL(42)},
-    43: {name: '[The Witch of Wailing Lightning] Cerberus', imageURL: generateImageURL(43)},
-    44: {name: '[The Witch of Torrential Sorrow] Rusalka', imageURL: generateImageURL(44)},
-    45: {name: '[The Witch of Longinus] Elfriede', imageURL: generateImageURL(45)},
-    46: {name: '[The Witch of Snowy Illusions] Lunalynn', imageURL: generateImageURL(46)},
-    47: {name: '[The Witch of Conflagration] Valeriede', imageURL: generateImageURL(47)},
-    48: {name: '[The Witch of Rust] A.A.', imageURL: generateImageURL(48)},
-    49: {name: '[The Witch of Fallen Crystals] Ophelia', imageURL: generateImageURL(49)},
-    50: {name: '[The Witch of Lost Souls] Armstrong', imageURL: generateImageURL(50)},
+    41: {name: 'Natasha', imageURL: generateImageURL(41)},
+    42: {name: 'Fortina', imageURL: generateImageURL(42)},
+    43: {name: 'Cerberus', imageURL: generateImageURL(43)},
+    44: {name: 'Rusalka', imageURL: generateImageURL(44)},
+    45: {name: 'Elfriede', imageURL: generateImageURL(45)},
+    46: {name: 'Lunalynn', imageURL: generateImageURL(46)},
+    47: {name: 'Valeriede', imageURL: generateImageURL(47)},
+    48: {name: 'A.A.', imageURL: generateImageURL(48)},
+    49: {name: 'Ophelia', imageURL: generateImageURL(49)},
+    50: {name: 'Armstrong', imageURL: generateImageURL(50)},
     51: {name: 'Sophia', imageURL: generateImageURL(51)},
     52: {name: 'Sivi', imageURL: generateImageURL(52)},
     53: {name: 'Veela', imageURL: generateImageURL(53)},
@@ -161,20 +161,20 @@ const characterNames = {
     58: {name: 'Artie', imageURL: generateImageURL(58)},
     59: {name: 'Eir', imageURL: generateImageURL(59)},
     60: {name: 'Fia', imageURL: generateImageURL(60)},
-    61: {name: '[The Witch of God\'s Curse] Illya', imageURL: generateImageURL(61)},
+    61: {name: 'Illya', imageURL: generateImageURL(61)},
     62: {name: 'Priscilla', imageURL: generateImageURL(62)},
-    63: {name: '[The Witch of Justice] Paladea', imageURL: generateImageURL(63)},
+    63: {name: 'Paladea', imageURL: generateImageURL(63)},
     64: {name: 'Gil\'uial', imageURL: generateImageURL(64)},
     65: {name: 'Aine', imageURL: generateImageURL(65)},
-    66: {name: '[Attendant Tainted in Black] Iris', imageURL: generateImageURL(66)},
+    66: {name: 'Iris', imageURL: generateImageURL(66)},
     67: {name: 'Richesse', imageURL: generateImageURL(67)},
     68: {name: 'Fenny', imageURL: generateImageURL(68)},
-    69: {name: '[The Witch of Dreams] Kaguya', imageURL: generateImageURL(69)},
-    70: {name: '[Soldier of the Summer Breeze] Sabrina', imageURL: generateImageURL(70)},
-    71: {name: '[Gravekeeper\'s Summer Holiday] Moddey', imageURL: generateImageURL(71)},
-    72: {name: '[Summer\'s Reverb] Cordie', imageURL: generateImageURL(72)},
-    73: {name: '[Holy Night\'s Gift] Amour', imageURL: generateImageURL(73)},
-    74: {name: '[Holy Night\'s Prayer] Tropon', imageURL: generateImageURL(74)},
+    69: {name: 'Kaguya', imageURL: generateImageURL(69)},
+    70: {name: 'Sabrina', imageURL: generateImageURL(70)},
+    71: {name: 'Moddey', imageURL: generateImageURL(71)},
+    72: {name: 'Cordie', imageURL: generateImageURL(72)},
+    73: {name: 'Amour', imageURL: generateImageURL(73)},
+    74: {name: 'Tropon', imageURL: generateImageURL(74)},
     75: {name: 'Morgana', imageURL: generateImageURL(75)},
     76: {name: 'Yuni', imageURL: generateImageURL(76)},
     77: {name: 'Minasumari', imageURL: generateImageURL(77)},
@@ -188,15 +188,15 @@ const characterNames = {
     85: {name: 'Matilda', imageURL: generateImageURL(85)},
     86: {name: '', imageURL: generateImageURL(86)},
     87: {name: '', imageURL: generateImageURL(87)},
-    88: {name: '[Apostle of Caritas] Rosalie', imageURL: generateImageURL(88)},
+    88: {name: 'Rosalie', imageURL: generateImageURL(88)},
     89: {name: '', imageURL: generateImageURL(89)},
     90: {name: '', imageURL: generateImageURL(90)},
     91: {name: '', imageURL: generateImageURL(91)},
     92: {name: '', imageURL: generateImageURL(92)},
     93: {name: '', imageURL: generateImageURL(93)},
     94: {name: '', imageURL: generateImageURL(94)},
-    95: {name: '[Little Big Adventure] Nina', imageURL: generateImageURL(95)},
-    96: {name: '[A Midsummer Day\'s Dream] Amleth', imageURL: generateImageURL(96)}
+    95: {name: 'Nina (Azure)', imageURL: generateImageURL(95)},
+    96: {name: 'Amleth (Amber)', imageURL: generateImageURL(96)}
 }
 
 const rarity = {
@@ -352,20 +352,91 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         //     });
         // });
 
-        const targetCharacterIds = [parseInt(selectedCharacterIds)];
+        const resultsTable = document.getElementById('resultsTable');
+        resultsTable.innerHTML = ''; // Clear the table
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        const headers = ['Player Name', 'Character Name'];
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+
         data.forEach(apiData => {
             apiData.data.forEach(player => {
                 const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
                 if (selectedCharacterIds.every(id => characterIds.includes(id))) {
                     console.log(player.PlayerName);
+
+                    const tr = document.createElement('tr');
+
+                    const playerNameTd = document.createElement('td');
+                    playerNameTd.textContent = player.PlayerName;
+                    tr.appendChild(playerNameTd);
+
+                    const teamTd = document.createElement('td');
                     player.UserCharacterInfoList.forEach(info => {
                         const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
                         const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
                         console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
+
+                        const characterDiv = document.createElement('div');
+                        characterDiv.className = 'character-container'
+
+                        const rarityDiv = document.createElement('div');
+                        rarityDiv.textContent = characterRarity;
+                        characterDiv.appendChild(rarityDiv);
+
+                        const nameDiv = document.createElement('div');
+                        nameDiv.textContent = characterName;
+                        characterDiv.appendChild(nameDiv);
+
+                        const levelDiv = document.createElement('div');
+                        levelDiv.textContent = `Lv. ${info.Level}`;
+                        characterDiv.appendChild(levelDiv);
+
+                        const img = document.createElement('img');
+                        img.src = characterNames[info.CharacterId]?.imageURL;
+                        img.alt = characterName;
+                        characterDiv.appendChild(img);
+
+                        teamTd.appendChild(characterDiv);
+
+                        // const playerNameTd = document.createElement('td');
+                        // playerNameTd.textContent = player.PlayerName;
+                        // tr.appendChild(playerNameTd);
+
+                        // const characterNameTd = document.createElement('td');
+                        // characterNameTd.textContent = characterName;
+                        // tr.appendChild(characterNameTd);
+
+                        // const levelTd = document.createElement('td');
+                        // levelTd.textContent = info.Level;
+                        // tr.appendChild(levelTd);
+
+                        // const rarityTd = document.createElement('td');
+                        // rarityTd.textContent = characterRarity;
+                        // tr.appendChild(rarityTd);
+
+                        // tbody.appendChild(tr);
                     });
+
+                    tr.appendChild(teamTd);
+                    tbody.appendChild(tr);
                 }
             });
         })
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        resultsTable.appendChild(table);
+
         // data.data.forEach(player => {
         //     const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
         //     if (selectedCharacterIds.every(id => characterIds.includes(id))) {

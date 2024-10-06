@@ -1,4 +1,39 @@
+/* body {
+    font-family: 'Alegreya';
+} */
+
 #characterImage {
     width: 75px;
     height: 75px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: top; /* Ensure vertical alignmnet */
+}
+
+th {
+    background-color: #f2f2f2;
+    border: 1px solid black;
+}
+
+.character-container {
+    display: inline-block;
+    text-align: center;
+    /* margin: 10px; */
+    vertical-align: top; /* Ensure vertical alignmnet */
+    width: 150px; /* Set fixed width to handle long names */
+    word-wrap: break-word; /* Break long names */
+    /* border: 1px solid black; */
+}
+
+.character-container img {
+    width: 50px;
+    height: 50px;
+    /* border: 1px solid black; */
 }
