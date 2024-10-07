@@ -1,5 +1,4 @@
-**Team finder for MementoMori**
+**Team Finder for MementoMori (WIP)**
+#
 
-Find the teams of the chosen character that other people are using in Legend League.
-
-Currently, teams are only viewable in console
+Find the teams of the chosen character that other people are using in Battle League and Legend League.
