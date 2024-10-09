@@ -289,10 +289,75 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         });
         thead.appendChild(tr);
 
+        const regionMappingBL = {
+            '1': 'Japan',
+            '2': 'Korea',
+            '3': 'Asia',
+            '4': 'America',
+            '5': 'Europe',
+            '6': 'Global'
+        };
+
+        const regionMappingLL = {
+            '19': 'Korea',
+            '20': 'Korea',
+            '21': 'Asia',
+            '22': 'Asia',
+            '23': 'America',
+            '24': 'America',
+            '25': 'Europe',
+            '26': 'Global',
+            '27': 'Global',
+            '37': 'Japan',
+            '38': 'Japan',
+            '39': 'Japan',
+            '40': 'Japan',
+            '41': 'Japan',
+            '42': 'Japan',
+            '43': 'Japan',
+            '44': 'Japan',
+            '45': 'Japan',
+            '46': 'Japan',
+            '47': 'Japan',
+            '48': 'Japan',
+            '49': 'Japan',
+            '50': 'Japan',
+            '51': 'Japan',
+            '52': 'Japan',
+            '53': 'Japan',
+            '54': 'Japan',
+            '55': 'Japan',
+            '56': 'Japan',
+            '57': 'Japan',
+            '58': 'Japan',
+            '59': 'Japan',
+            '60': 'Japan',
+            '61': 'Japan',
+            '62': 'Japan',
+            '63': 'Japan',
+            '64': 'Japan',
+            '65': 'Japan',
+            '66': 'Japan',
+            '67': 'Japan'
+        };
+
         // Use a Set to track unique players
         const uniquePlayers = new Set();
 
-        data.forEach(apiData => {
+        data.forEach((apiData, index) => {
+            const url = urls[index];
+            let region = 'Unknown Region';
+
+            if (url.includes('/arena/')) {
+                const regionCode = url.match(/https:\/\/api\.mentemori\.icu\/(\d)/)[1];
+                region = regionMappingBL[regionCode] || 'Unknown Region';
+            } else if (url.includes('/legend/')) {
+                const regionCode = url.match(/https:\/\/api\.mentemori\.icu\/wg\/(\d+)/)[1];
+                region = regionMappingLL[regionCode] || 'Unknown Region';
+            }
+            // const regionCodeBL = urls[index].match(/https:\/\/api\.mentemori\.icu\/(\d)/)[1];
+            // const regionBL = regionMappingBL[regionCodeBL];
+
             apiData.data.forEach(player => {
                 /*
                     Unique identifier found through character equipment.
@@ -315,15 +380,18 @@ document.getElementById('getTeam').addEventListener('click', async () => {
 
                         const tr = document.createElement('tr');
 
+                        // Player Name
                         const playerNameTd = document.createElement('td');
-                        playerNameTd.textContent = player.PlayerName;
+                        // playerNameTd.textContent = player.PlayerName;
+                        const world = parseInt(playerId.toString().slice(-3), 10); // Get the last three digits of the playerId which represents the world
+                        playerNameTd.innerHTML = `${player.PlayerName}<br><small>${region} W${world}</small>`;
                         tr.appendChild(playerNameTd);
 
                         const teamTd = document.createElement('td');
                         player.UserCharacterInfoList.forEach(info => {
                             const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
                             const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
-                            console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} Lv. ${info.Level} (${characterRarity})`);
+                            console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} ${region} Lv. ${info.Level} (${characterRarity})`);
 
                             // // Debug
                             // if (characterName === 'Soltina') {
