@@ -8,9 +8,13 @@
 </head>
 <body>
     <h1>Get team</h1>
-    <select id="characterDropdown">
+    <!-- <select id="characterDropdown">
         <option value="">Select characters</option>
-    </select>
+    </select> -->
+    <div class="custom-dropdown">
+        <button class="dropdown-button">Select characters</button>
+        <div class="dropdown-content" id="characterDropdown"></div>
+    </div>
     <br><br>
     <div>
         <label>
@@ -44,7 +48,7 @@
     <button id = "getTeam">Get Team</button>
     <!-- <div id = "tableContainer"></div> -->
     <!-- <div id = "selectedCharacters"></div> -->
-     <img id="characterImage" src="" alt="Character Image" style="display: none;">
+     <!-- <img id="characterImage" src="" alt="Character Image" style="display: none;"> -->
      <div id="resultsTable"></div>
 
     <script src="script.js"></script>

@@ -64,7 +64,7 @@ const characterNames = {
     58: {name: 'Artie', imageURL: generateImageURL(58)},
     59: {name: 'Eir', imageURL: generateImageURL(59)},
     60: {name: 'Fia', imageURL: generateImageURL(60)},
-    61: {name: 'Illya', imageURL: generateImageURL(61)},
+    61: {name: 'Illya (Chaos)', imageURL: generateImageURL(61)},
     62: {name: 'Priscilla', imageURL: generateImageURL(62)},
     63: {name: 'Paladea', imageURL: generateImageURL(63)},
     64: {name: 'Gil\'uial', imageURL: generateImageURL(64)},
@@ -73,11 +73,11 @@ const characterNames = {
     67: {name: 'Richesse', imageURL: generateImageURL(67)},
     68: {name: 'Fenny', imageURL: generateImageURL(68)},
     69: {name: 'Kaguya', imageURL: generateImageURL(69)},
-    70: {name: 'Sabrina', imageURL: generateImageURL(70)},
-    71: {name: 'Moddey', imageURL: generateImageURL(71)},
-    72: {name: 'Cordie', imageURL: generateImageURL(72)},
-    73: {name: 'Amour', imageURL: generateImageURL(73)},
-    74: {name: 'Tropon', imageURL: generateImageURL(74)},
+    70: {name: 'Sabrina (Emerald)', imageURL: generateImageURL(70)},
+    71: {name: 'Moddey (Amber)', imageURL: generateImageURL(71)},
+    72: {name: 'Cordie (Crimson)', imageURL: generateImageURL(72)},
+    73: {name: 'Amour (Amber)', imageURL: generateImageURL(73)},
+    74: {name: 'Tropon (Azure)', imageURL: generateImageURL(74)},
     75: {name: 'Morgana', imageURL: generateImageURL(75)},
     76: {name: 'Yuni', imageURL: generateImageURL(76)},
     77: {name: 'Minasumari', imageURL: generateImageURL(77)},
@@ -91,7 +91,7 @@ const characterNames = {
     85: {name: 'Matilda', imageURL: generateImageURL(85)},
     86: {name: '', imageURL: generateImageURL(86)},
     87: {name: '', imageURL: generateImageURL(87)},
-    88: {name: 'Rosalie', imageURL: generateImageURL(88)},
+    88: {name: 'Rosalie (Radiance)', imageURL: generateImageURL(88)},
     89: {name: '', imageURL: generateImageURL(89)},
     90: {name: '', imageURL: generateImageURL(90)},
     91: {name: '', imageURL: generateImageURL(91)},
@@ -130,46 +130,91 @@ const rarity = {
     16777216: 'LR+15'
 };
 
-const dropdown = document.getElementById('characterDropdown');
-const characterImage = document.getElementById('characterImage');
+// const dropdown = document.getElementById('characterDropdown');
+// const characterImage = document.getElementById('characterImage');
 // const selectedCharactersDiv = document.getElementById('selectedCharacters');
+
+const dropdownButton = document.querySelector('.dropdown-button');
+const dropdownContent = document.getElementById('characterDropdown');
 
 Object.entries(characterNames).forEach(([id, {name, imageURL}]) => {
     if (name) {
-        const option = document.createElement('option');
-        option.value = id;
-        option.textContent = name;
-        dropdown.appendChild(option);
+        // const option = document.createElement('option');
+        // option.value = id;
+        // option.textContent = name;
+        // dropdown.appendChild(option);
+
+        const optionDiv = document.createElement('div');
+        optionDiv.dataset.value = id;
+        optionDiv.innerHTML = `<img src="${imageURL}" alt="${name}"> ${name}`;
+        dropdownContent.appendChild(optionDiv);
 
     }
 });
 
-dropdown.addEventListener('change', () => {
-    const selectedOptions = Array.from(dropdown.selectedOptions);
-    const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
+dropdownButton.addEventListener('click', () => {
+    dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+});
 
-    // const selectedOption = dropdown.options[dropdown.selectedIndex];
-    // const characterId = selectedOption.value;
-    const character = characterNames[selectedCharacterIds];
-
-    if (character) {
-        characterImage.src = character.imageURL;
-        characterImage.alt = character.name;
-        characterImage.style.display = 'block';
+dropdownContent.addEventListener('click', (event) => {
+    const optionDiv = event.target.closest('div');
+    if (optionDiv) {
+        const selectedCharacterId = optionDiv.dataset.value;
+        const character = characterNames[selectedCharacterId];
+        if (character) {
+            dropdownButton.dataset.value = selectedCharacterId;
+            // dropdownButton.innerHTML = `<img src="${character.imageURL}" alt="${character.name}"> ${character.name}`;
+            dropdownButton.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <img src="${character.imageURL}" alt="${character.name}">
+                <span>${character.name}</span>
+            </div>
+            `;
+            dropdownContent.style.display = 'none';
+        }
     }
+});
 
-    console.log(selectedCharacterIds);
-})
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.custom-dropdown')) {
+        dropdownContent.style.display = 'none';
+    }
+});
+
+// dropdown.addEventListener('change', () => {
+//     const selectedOptions = Array.from(dropdown.selectedOptions);
+//     const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
+
+//     // const selectedOption = dropdown.options[dropdown.selectedIndex];
+//     // const characterId = selectedOption.value;
+//     const character = characterNames[selectedCharacterIds];
+
+//     if (character) {
+//         characterImage.src = character.imageURL;
+//         characterImage.alt = character.name;
+//         characterImage.style.display = 'block';
+//     }
+
+//     console.log(selectedCharacterIds);
+// })
 
 document.getElementById('getTeam').addEventListener('click', async () => {
-    const selectedOptions = Array.from(dropdown.selectedOptions);
-    const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
+    // const selectedOptions = Array.from(dropdown.selectedOptions);
+    // const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
     // console.log()
 
-    if (selectedCharacterIds.length === 0) {
-        alert('Please select at least one character');
+    // if (selectedCharacterIds.length === 0) {
+    //     alert('Please select at least one character');
+    //     return;
+    // }
+
+    const selectedCharacterId = dropdownButton.dataset.value;
+    console.log(selectedCharacterId);
+    if (!selectedCharacterId) {
+        alert('Please select a character');
         return;
     }
+    const selectedCharacterIds = [parseInt(selectedCharacterId)];
 
     const urls = [];
     const LL = document.getElementById('LL').checked;
