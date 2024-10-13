@@ -130,10 +130,6 @@ const rarity = {
     16777216: 'LR+15'
 };
 
-// const dropdown = document.getElementById('characterDropdown');
-// const characterImage = document.getElementById('characterImage');
-// const selectedCharactersDiv = document.getElementById('selectedCharacters');
-
 const dropdownButton = document.querySelector('.dropdown-button');
 const dropdownContent = document.getElementById('characterDropdown');
 const soulColorFilter = document.getElementById('soulColorFilter');
