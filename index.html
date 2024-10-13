@@ -7,59 +7,73 @@
     <title>MementoMori Team Finder</title>
 </head>
 <body>
-    <h1>MementoMori Team Finder</h1>
-    <div class="filter-dropdown">
-        <label for="soulColorFilter">Filter selection by Soul Color:</label>
-        <select id="soulColorFilter">
-            <option value="">All</option>
-            <option value="Azure">Azure</option>
-            <option value="Crimson">Crimson</option>
-            <option value="Emerald">Emerald</option>
-            <option value="Amber">Amber</option>
-            <option value="Radiance">Radiance</option>
-            <option value="Chaos">Chaos</option>
-        </select>
+    <header>
+        <h1>MementoMori Team Finder</h1>
+    </header>
+    <main>
+    <div class="center-container">
+        <div class="filter-dropdown">
+            <label for="soulColorFilter">Filter selection by Soul Color:</label>
+            <select id="soulColorFilter">
+                <option value="">All</option>
+                <option value="Azure">Azure</option>
+                <option value="Crimson">Crimson</option>
+                <option value="Emerald">Emerald</option>
+                <option value="Amber">Amber</option>
+                <option value="Radiance">Radiance</option>
+                <option value="Chaos">Chaos</option>
+            </select>
+        </div>
     </div>
-    <div class="custom-dropdown">
-        <button class="dropdown-button">Select characters</button>
-        <div class="dropdown-content" id="characterDropdown"></div>
+    <div class="center-container">
+        <div class="custom-dropdown">
+            <button class="dropdown-button" style="width: 144px;">Select character</button>
+            <div class="dropdown-content" id="characterDropdown"></div>
+        </div>
     </div>
     <br><br>
-    <div>
+    <div class="center-container">
+    <div class="checkbox-group">
         <label>
-            <input type="checkbox" id="BL">Battle League
+            <input type="checkbox" id="BL" name="league">Battle League
         </label>
         <label>
-            <input type="checkbox" id="LL">Legend League
+            <input type="checkbox" id="LL" name="league">Legend League
         </label>
     </div>
-    <div>
+    </div>
+    <div class="center-container">
+    <div class="checkbox-group2">
         <label>
-            <input type="checkbox" id="KR" value="19to20">Korea
+            <input type="checkbox" id="KR" name="region" value="19to20">Korea
         </label>
         <label>
-            <input type="checkbox" id="ASIA" value="21to22">Asia
+            <input type="checkbox" id="ASIA" name="region" value="21to22">Asia
         </label>
         <label>
-            <input type="checkbox" id="NA" value="23to24">America
+            <input type="checkbox" id="NA" name="region" value="23to24">America
         </label>
         <label>
-            <input type="checkbox" id="EU" value="25">Europe
+            <input type="checkbox" id="EU" name="region" value="25">Europe
         </label>
         <label>
-            <input type="checkbox" id="GLB" value="26to27">Global
+            <input type="checkbox" id="GLB" name="region" value="26to27">Global
         </label>
         <label>
-            <input type="checkbox" id="JP" value="37to66">Japan
+            <input type="checkbox" id="JP" name="region" value="37to66">Japan
         </label>
+    </div>
     </div>
     <br>
-    <button id = "getTeam">Get Team</button>
+    <div class="center-container">
+    <button id = "getTeam" class="btn-primary">Get Team</button>
+    </div>
     <br><br>
     <!-- <div id="progressBarContainer" class="progress-bar-container" style="display: none">
         <div id="progressBar" class="progress-bar"></div>
     </div> -->
     <div id="resultsTable"></div>
+    </main>
 
     <script src="script.js"></script>
 </body>

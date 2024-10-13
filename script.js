@@ -136,6 +136,7 @@ const soulColorFilter = document.getElementById('soulColorFilter');
 // const progressBarContainer = document.getElementById('progressBarContainer');
 // const progressBar = document.getElementById('progressBar');
 
+// Populate dropdown with character names and images
 const populateDropdown = (filter = '') => {
     dropdownContent.innerHTML = ''; // Clear existing options
     Object.entries(characterNames).forEach(([id, { name, imageURL, soulColor }]) => {
@@ -217,6 +218,22 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         alert('Please select a character');
         return;
     }
+
+    // Check if any league or region checkboxes are selected
+    const leagueCheckboxes = document.querySelectorAll('input[name="league"]');
+    const regionCheckboxes = document.querySelectorAll('input[name="region"]');
+    const isAnyLeagueSelected = Array.from(leagueCheckboxes).some(checkbox => checkbox.checked);
+    const isAnyRegionSelected = Array.from(regionCheckboxes).some(checkbox => checkbox.checked);
+
+    // If no league or region checkboxes are selected, select all
+    if (!isAnyLeagueSelected) {
+        leagueCheckboxes.forEach(checkbox => checkbox.checked = true);
+    }
+
+    if (!isAnyRegionSelected) {
+        regionCheckboxes.forEach(checkbox => checkbox.checked = true);
+    }
+
     const selectedCharacterIds = [parseInt(selectedCharacterId)];
 
     // // Display progress bar
