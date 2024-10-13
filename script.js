@@ -290,7 +290,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
             }
         }
         if (ASIA) {
-            for (let i = 1; i <= 18; i++) {
+            for (let i = 1; i <= 19; i++) {
                 const paddedId = String(i).padStart(3, '0');
                 urls.push(`https://api.mentemori.icu/3${paddedId}/arena/latest`);
             }
