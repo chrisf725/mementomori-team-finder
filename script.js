@@ -4,102 +4,102 @@ const generateImageURL = (id) => {
 }
 
 const characterNames = {
-    1: {name: 'Monica', imageURL: generateImageURL(1)},
-    2: {name: 'Illya', imageURL: generateImageURL(2)},
-    3: {name: 'Iris', imageURL: generateImageURL(3)},
-    4: {name: 'Loki', imageURL: generateImageURL(4)},
-    5: {name: 'Soltina', imageURL: generateImageURL(5)},
-    6: {name: 'Amleth', imageURL: generateImageURL(6)},
-    7: {name: 'Fenrir', imageURL: generateImageURL(7)},
-    8: {name: 'Florence', imageURL: generateImageURL(8)},
-    9: {name: 'Sonya', imageURL: generateImageURL(9)},
-    10: {name: 'Moddey', imageURL: generateImageURL(10)},
-    11: {name: 'Charlotte', imageURL: generateImageURL(11)},
-    12: {name: 'Arianrhod', imageURL: generateImageURL(12)},
-    13: {name: 'Theodora', imageURL: generateImageURL(13)},
-    14: {name: 'Petra', imageURL: generateImageURL(14)},
-    15: {name: 'Sabrina', imageURL: generateImageURL(15)},
-    16: {name: 'Freesia', imageURL: generateImageURL(16)},
-    17: {name: 'Amour', imageURL: generateImageURL(17)},
-    18: {name: 'Rean', imageURL: generateImageURL(18)},
-    19: {name: 'Belle', imageURL: generateImageURL(19)},
-    20: {name: 'Dian', imageURL: generateImageURL(20)},
-    21: {name: 'Shizu', imageURL: generateImageURL(21)},
-    22: {name: 'Zara', imageURL: generateImageURL(22)},
-    23: {name: 'Rosalie', imageURL: generateImageURL(23)},
-    24: {name: 'Libra', imageURL: generateImageURL(24)},
-    25: {name: 'Ivy', imageURL: generateImageURL(25)},
-    26: {name: 'Merlyn', imageURL: generateImageURL(26)},
-    27: {name: 'Cordie', imageURL: generateImageURL(27)},
-    28: {name: 'Nina', imageURL: generateImageURL(28)},
-    29: {name: 'Mertillier', imageURL: generateImageURL(29)},
-    30: {name: 'Luke', imageURL: generateImageURL(30)},
-    31: {name: 'Garmr', imageURL: generateImageURL(31)},
-    32: {name: 'Skuld', imageURL: generateImageURL(32)},
-    33: {name: 'Cherna', imageURL: generateImageURL(33)},
-    34: {name: 'Soteira', imageURL: generateImageURL(34)},
-    35: {name: 'Mimi', imageURL: generateImageURL(35)},
-    36: {name: 'Tropon', imageURL: generateImageURL(36)},
-    37: {name: 'Hathor', imageURL: generateImageURL(37)},
-    38: {name: 'Olivia', imageURL: generateImageURL(38)},
-    39: {name: 'Primavera', imageURL: generateImageURL(39)},
-    40: {name: 'Carol', imageURL: generateImageURL(40)},
-    41: {name: 'Natasha', imageURL: generateImageURL(41)},
-    42: {name: 'Fortina', imageURL: generateImageURL(42)},
-    43: {name: 'Cerberus', imageURL: generateImageURL(43)},
-    44: {name: 'Rusalka', imageURL: generateImageURL(44)},
-    45: {name: 'Elfriede', imageURL: generateImageURL(45)},
-    46: {name: 'Lunalynn', imageURL: generateImageURL(46)},
-    47: {name: 'Valeriede', imageURL: generateImageURL(47)},
-    48: {name: 'A.A.', imageURL: generateImageURL(48)},
-    49: {name: 'Ophelia', imageURL: generateImageURL(49)},
-    50: {name: 'Armstrong', imageURL: generateImageURL(50)},
-    51: {name: 'Sophia', imageURL: generateImageURL(51)},
-    52: {name: 'Sivi', imageURL: generateImageURL(52)},
-    53: {name: 'Veela', imageURL: generateImageURL(53)},
-    54: {name: 'Chiffon', imageURL: generateImageURL(54)},
-    55: {name: 'Lea', imageURL: generateImageURL(55)},
-    56: {name: 'Claudia', imageURL: generateImageURL(56)},
-    57: {name: 'Stella', imageURL: generateImageURL(57)},
-    58: {name: 'Artie', imageURL: generateImageURL(58)},
-    59: {name: 'Eir', imageURL: generateImageURL(59)},
-    60: {name: 'Fia', imageURL: generateImageURL(60)},
-    61: {name: 'Illya (Chaos)', imageURL: generateImageURL(61)},
-    62: {name: 'Priscilla', imageURL: generateImageURL(62)},
-    63: {name: 'Paladea', imageURL: generateImageURL(63)},
-    64: {name: 'Gil\'uial', imageURL: generateImageURL(64)},
-    65: {name: 'Aine', imageURL: generateImageURL(65)},
-    66: {name: 'Iris', imageURL: generateImageURL(66)},
-    67: {name: 'Richesse', imageURL: generateImageURL(67)},
-    68: {name: 'Fenny', imageURL: generateImageURL(68)},
-    69: {name: 'Kaguya', imageURL: generateImageURL(69)},
-    70: {name: 'Sabrina (Emerald)', imageURL: generateImageURL(70)},
-    71: {name: 'Moddey (Amber)', imageURL: generateImageURL(71)},
-    72: {name: 'Cordie (Crimson)', imageURL: generateImageURL(72)},
-    73: {name: 'Amour (Amber)', imageURL: generateImageURL(73)},
-    74: {name: 'Tropon (Azure)', imageURL: generateImageURL(74)},
-    75: {name: 'Morgana', imageURL: generateImageURL(75)},
-    76: {name: 'Yuni', imageURL: generateImageURL(76)},
-    77: {name: 'Minasumari', imageURL: generateImageURL(77)},
-    78: {name: 'Asahi', imageURL: generateImageURL(78)},
-    79: {name: 'Serruria', imageURL: generateImageURL(79)},
-    80: {name: 'Milla', imageURL: generateImageURL(80)},
-    81: {name: 'Tama', imageURL: generateImageURL(81)},
-    82: {name: 'Alexandra', imageURL: generateImageURL(82)},
+    1: {name: 'Monica', imageURL: generateImageURL(1), soulColor: 'Azure'},
+    2: {name: 'Illya', imageURL: generateImageURL(2), soulColor: 'Azure'},
+    3: {name: 'Iris', imageURL: generateImageURL(3), soulColor: 'Azure'},
+    4: {name: 'Loki', imageURL: generateImageURL(4), soulColor: 'Azure'},
+    5: {name: 'Soltina', imageURL: generateImageURL(5), soulColor: 'Azure'},
+    6: {name: 'Amleth', imageURL: generateImageURL(6), soulColor: 'Azure'},
+    7: {name: 'Fenrir', imageURL: generateImageURL(7), soulColor: 'Azure'},
+    8: {name: 'Florence', imageURL: generateImageURL(8), soulColor: 'Azure'},
+    9: {name: 'Sonya', imageURL: generateImageURL(9), soulColor: 'Azure'},
+    10: {name: 'Moddey', imageURL: generateImageURL(10), soulColor: 'Azure'},
+    11: {name: 'Charlotte', imageURL: generateImageURL(11), soulColor: 'Crimson'},
+    12: {name: 'Arianrhod', imageURL: generateImageURL(12), soulColor: 'Crimson'},
+    13: {name: 'Theodora', imageURL: generateImageURL(13), soulColor: 'Crimson'},
+    14: {name: 'Petra', imageURL: generateImageURL(14), soulColor: 'Crimson'},
+    15: {name: 'Sabrina', imageURL: generateImageURL(15), soulColor: 'Crimson'},
+    16: {name: 'Freesia', imageURL: generateImageURL(16), soulColor: 'Crimson'},
+    17: {name: 'Amour', imageURL: generateImageURL(17), soulColor: 'Crimson'},
+    18: {name: 'Rean', imageURL: generateImageURL(18), soulColor: 'Crimson'},
+    19: {name: 'Belle', imageURL: generateImageURL(19), soulColor: 'Crimson'},
+    20: {name: 'Dian', imageURL: generateImageURL(20), soulColor: 'Crimson'},
+    21: {name: 'Shizu', imageURL: generateImageURL(21), soulColor: 'Emerald'},
+    22: {name: 'Zara', imageURL: generateImageURL(22), soulColor: 'Emerald'},
+    23: {name: 'Rosalie', imageURL: generateImageURL(23), soulColor: 'Emerald'},
+    24: {name: 'Libra', imageURL: generateImageURL(24), soulColor: 'Emerald'},
+    25: {name: 'Ivy', imageURL: generateImageURL(25), soulColor: 'Emerald'},
+    26: {name: 'Merlyn', imageURL: generateImageURL(26), soulColor: 'Emerald'},
+    27: {name: 'Cordie', imageURL: generateImageURL(27), soulColor: 'Emerald'},
+    28: {name: 'Nina', imageURL: generateImageURL(28), soulColor: 'Emerald'},
+    29: {name: 'Mertillier', imageURL: generateImageURL(29), soulColor: 'Emerald'},
+    30: {name: 'Luke', imageURL: generateImageURL(30), soulColor: 'Emerald'},
+    31: {name: 'Garmr', imageURL: generateImageURL(31), soulColor: 'Amber'},
+    32: {name: 'Skuld', imageURL: generateImageURL(32), soulColor: 'Amber'},
+    33: {name: 'Cherna', imageURL: generateImageURL(33), soulColor: 'Amber'},
+    34: {name: 'Soteira', imageURL: generateImageURL(34), soulColor: 'Amber'},
+    35: {name: 'Mimi', imageURL: generateImageURL(35), soulColor: 'Amber'},
+    36: {name: 'Tropon', imageURL: generateImageURL(36), soulColor: 'Amber'},
+    37: {name: 'Hathor', imageURL: generateImageURL(37), soulColor: 'Amber'},
+    38: {name: 'Olivia', imageURL: generateImageURL(38), soulColor: 'Amber'},
+    39: {name: 'Primavera', imageURL: generateImageURL(39), soulColor: 'Amber'},
+    40: {name: 'Carol', imageURL: generateImageURL(40), soulColor: 'Amber'},
+    41: {name: 'Natasha', imageURL: generateImageURL(41), soulColor: 'Radiance'},
+    42: {name: 'Fortina', imageURL: generateImageURL(42), soulColor: 'Radiance'},
+    43: {name: 'Cerberus', imageURL: generateImageURL(43), soulColor: 'Radiance'},
+    44: {name: 'Rusalka', imageURL: generateImageURL(44), soulColor: 'Radiance'},
+    45: {name: 'Elfriede', imageURL: generateImageURL(45), soulColor: 'Radiance'},
+    46: {name: 'Lunalynn', imageURL: generateImageURL(46), soulColor: 'Chaos'},
+    47: {name: 'Valeriede', imageURL: generateImageURL(47), soulColor: 'Chaos'},
+    48: {name: 'A.A.', imageURL: generateImageURL(48), soulColor: 'Chaos'},
+    49: {name: 'Ophelia', imageURL: generateImageURL(49), soulColor: 'Chaos'},
+    50: {name: 'Armstrong', imageURL: generateImageURL(50), soulColor: 'Chaos'},
+    51: {name: 'Sophia', imageURL: generateImageURL(51), soulColor: 'Crimson'},
+    52: {name: 'Sivi', imageURL: generateImageURL(52), soulColor: 'Azure'},
+    53: {name: 'Veela', imageURL: generateImageURL(53), soulColor: 'Amber'},
+    54: {name: 'Chiffon', imageURL: generateImageURL(54), soulColor: 'Crimson'},
+    55: {name: 'Lea', imageURL: generateImageURL(55), soulColor: 'Emerald'},
+    56: {name: 'Claudia', imageURL: generateImageURL(56), soulColor: 'Emerald'},
+    57: {name: 'Stella', imageURL: generateImageURL(57), soulColor: 'Azure'},
+    58: {name: 'Artie', imageURL: generateImageURL(58), soulColor: 'Crimson'},
+    59: {name: 'Eir', imageURL: generateImageURL(59), soulColor: 'Azure'},
+    60: {name: 'Fia', imageURL: generateImageURL(60), soulColor: 'Emerald'},
+    61: {name: 'Illya (Chaos)', imageURL: generateImageURL(61), soulColor: 'Chaos'},
+    62: {name: 'Priscilla', imageURL: generateImageURL(62), soulColor: 'Crimson'},
+    63: {name: 'Paladea', imageURL: generateImageURL(63), soulColor: 'Chaos'},
+    64: {name: 'Gil\'uial', imageURL: generateImageURL(64), soulColor: 'Azure'},
+    65: {name: 'Aine', imageURL: generateImageURL(65), soulColor: 'Radiance'},
+    66: {name: 'Iris (Amber)', imageURL: generateImageURL(66), soulColor: 'Amber'},
+    67: {name: 'Richesse', imageURL: generateImageURL(67), soulColor: 'Amber'},
+    68: {name: 'Fenny', imageURL: generateImageURL(68), soulColor: 'Azure'},
+    69: {name: 'Kaguya', imageURL: generateImageURL(69), soulColor: 'Chaos'},
+    70: {name: 'Sabrina (Emerald)', imageURL: generateImageURL(70), soulColor: 'Emerald'},
+    71: {name: 'Moddey (Amber)', imageURL: generateImageURL(71), soulColor: 'Amber'},
+    72: {name: 'Cordie (Crimson)', imageURL: generateImageURL(72), soulColor: 'Crimson'},
+    73: {name: 'Amour (Amber)', imageURL: generateImageURL(73), soulColor: 'Amber'},
+    74: {name: 'Tropon (Azure)', imageURL: generateImageURL(74), soulColor: 'Azure'},
+    75: {name: 'Morgana', imageURL: generateImageURL(75), soulColor: 'Crimson'},
+    76: {name: 'Yuni', imageURL: generateImageURL(76), soulColor: 'Emerald'},
+    77: {name: 'Minasumari', imageURL: generateImageURL(77), soulColor: 'Azure'},
+    78: {name: 'Asahi', imageURL: generateImageURL(78), soulColor: 'Amber'},
+    79: {name: 'Serruria', imageURL: generateImageURL(79), soulColor: 'Azure'},
+    80: {name: 'Milla', imageURL: generateImageURL(80), soulColor: 'Emerald'},
+    81: {name: 'Tama', imageURL: generateImageURL(81), soulColor: 'Amber'},
+    82: {name: 'Alexandra', imageURL: generateImageURL(82), soulColor: 'Emerald'},
     83: {name: '', imageURL: generateImageURL(83)},
-    84: {name: 'Liselotte', imageURL: generateImageURL(84)},
-    85: {name: 'Matilda', imageURL: generateImageURL(85)},
+    84: {name: 'Liselotte', imageURL: generateImageURL(84), soulColor: 'Azure'},
+    85: {name: 'Matilda', imageURL: generateImageURL(85), soulColor: 'Crimson'},
     86: {name: '', imageURL: generateImageURL(86)},
     87: {name: '', imageURL: generateImageURL(87)},
-    88: {name: 'Rosalie (Radiance)', imageURL: generateImageURL(88)},
+    88: {name: 'Rosalie (Radiance)', imageURL: generateImageURL(88), soulColor: 'Radiance'},
     89: {name: '', imageURL: generateImageURL(89)},
     90: {name: '', imageURL: generateImageURL(90)},
     91: {name: '', imageURL: generateImageURL(91)},
     92: {name: '', imageURL: generateImageURL(92)},
     93: {name: '', imageURL: generateImageURL(93)},
     94: {name: '', imageURL: generateImageURL(94)},
-    95: {name: 'Nina (Azure)', imageURL: generateImageURL(95)},
-    96: {name: 'Amleth (Amber)', imageURL: generateImageURL(96)}
+    95: {name: 'Nina (Azure)', imageURL: generateImageURL(95), soulColor: 'Azure'},
+    96: {name: 'Amleth (Amber)', imageURL: generateImageURL(96), soulColor: 'Amber'},
 }
 
 const rarity = {
@@ -136,21 +136,23 @@ const rarity = {
 
 const dropdownButton = document.querySelector('.dropdown-button');
 const dropdownContent = document.getElementById('characterDropdown');
+const soulColorFilter = document.getElementById('soulColorFilter');
+// const progressBarContainer = document.getElementById('progressBarContainer');
+// const progressBar = document.getElementById('progressBar');
 
-Object.entries(characterNames).forEach(([id, {name, imageURL}]) => {
-    if (name) {
-        // const option = document.createElement('option');
-        // option.value = id;
-        // option.textContent = name;
-        // dropdown.appendChild(option);
+const populateDropdown = (filter = '') => {
+    dropdownContent.innerHTML = ''; // Clear existing options
+    Object.entries(characterNames).forEach(([id, { name, imageURL, soulColor }]) => {
+        if (name && (filter === '' || soulColor === filter)) {
+            const optionDiv = document.createElement('div');
+            optionDiv.dataset.value = id;
+            optionDiv.innerHTML = `<img src="${imageURL}" alt="${name}"> ${name}`;
+            dropdownContent.appendChild(optionDiv);
+        }
+    });
+};
 
-        const optionDiv = document.createElement('div');
-        optionDiv.dataset.value = id;
-        optionDiv.innerHTML = `<img src="${imageURL}" alt="${name}"> ${name}`;
-        dropdownContent.appendChild(optionDiv);
-
-    }
-});
+populateDropdown(); // Initial population of dropdown
 
 dropdownButton.addEventListener('click', () => {
     dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
@@ -179,6 +181,11 @@ document.addEventListener('click', (event) => {
     if (!event.target.closest('.custom-dropdown')) {
         dropdownContent.style.display = 'none';
     }
+});
+
+soulColorFilter.addEventListener('change', (event) => {
+    const filter = event.target.value;
+    populateDropdown(filter);
 });
 
 // dropdown.addEventListener('change', () => {
@@ -215,6 +222,10 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         return;
     }
     const selectedCharacterIds = [parseInt(selectedCharacterId)];
+
+    // // Display progress bar
+    // progressBarContainer.style.display = 'block';
+    // progressBar.style.width = '0%';
 
     const urls = [];
     const LL = document.getElementById('LL').checked;
@@ -304,6 +315,16 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         }
     }
 
+    // // Progress bar
+    // const totalUrls = urls.length;
+    // for (let i = 0; i < totalUrls; i++) {
+    //     await fetch(urls[i]);
+    //     const progress = ((i + 1) / totalUrls) * 100;
+    //     progressBar.style.width = `${progress}%`;
+    // }
+
+    // progressBarContainer.style.display = 'none';
+
 
 
     try {
@@ -325,7 +346,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         const thead = document.createElement('thead');
         const tbody = document.createElement('tbody');
 
-        const headers = ['Player Name', 'Character Name'];
+        const headers = ['Player Name', 'Team'];
         const tr = document.createElement('tr');
         headers.forEach(header => {
             const th = document.createElement('th');

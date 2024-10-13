@@ -22,6 +22,11 @@ th {
     border: 1px solid black;
 }
 
+/* #resultsTable {
+    margin: 0 auto;
+    display: table;
+} */
+
 .character-container {
     display: inline-block;
     text-align: center;
@@ -47,8 +52,15 @@ th {
 .dropdown-button {
     background-color: #f2f2f2;
     border: 3px solid #ccc;
+    border-radius: 10px;
     padding: 5px;
     cursor: pointer;
+}
+
+.dropdown-button:hover {
+    background-color: #d1c1b0;
+    border-radius: 10px;
+    transition: background-color;
 }
 
 .dropdown-content {
@@ -71,7 +83,7 @@ th {
 }
 
 .dropdown-content div:hover {
-    background-color: #ac9d8d; /* Change background color for highlight */
+    background-color: #d1c1b0; /* Change background color for highlight */
     border-radius: 5px; /* Rounded corners */
     transition: background-color; /* Smooth transition */
 }
@@ -81,3 +93,22 @@ th {
     width: 45px;
     height: 45px;
 }
+
+/* Progress bar
+.progress-bar-container {
+    width: 80%;
+    background-color: #ccc;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+    margin: 10px auto;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: #4CAF50;
+    border-radius: 10px;
+    transition: width 0.4s ease;
+} */

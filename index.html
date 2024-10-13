@@ -7,10 +7,19 @@
     <title>MementoMori Team Finder</title>
 </head>
 <body>
-    <h1>Get team</h1>
-    <!-- <select id="characterDropdown">
-        <option value="">Select characters</option>
-    </select> -->
+    <h1>MementoMori Team Finder</h1>
+    <div class="filter-dropdown">
+        <label for="soulColorFilter">Filter selection by Soul Color:</label>
+        <select id="soulColorFilter">
+            <option value="">All</option>
+            <option value="Azure">Azure</option>
+            <option value="Crimson">Crimson</option>
+            <option value="Emerald">Emerald</option>
+            <option value="Amber">Amber</option>
+            <option value="Radiance">Radiance</option>
+            <option value="Chaos">Chaos</option>
+        </select>
+    </div>
     <div class="custom-dropdown">
         <button class="dropdown-button">Select characters</button>
         <div class="dropdown-content" id="characterDropdown"></div>
@@ -46,10 +55,11 @@
     </div>
     <br>
     <button id = "getTeam">Get Team</button>
-    <!-- <div id = "tableContainer"></div> -->
-    <!-- <div id = "selectedCharacters"></div> -->
-     <!-- <img id="characterImage" src="" alt="Character Image" style="display: none;"> -->
-     <div id="resultsTable"></div>
+    <br><br>
+    <!-- <div id="progressBarContainer" class="progress-bar-container" style="display: none">
+        <div id="progressBar" class="progress-bar"></div>
+    </div> -->
+    <div id="resultsTable"></div>
 
     <script src="script.js"></script>
 </body>
