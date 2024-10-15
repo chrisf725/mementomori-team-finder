@@ -1,3 +1,7 @@
+document.getElementById('closeInfoBox').addEventListener('click', function() {
+    document.getElementById('infoBox').style.display = 'none';
+});
+
 const generateImageURL = (id) => {
     const paddedId = String(id).padStart(6, '0');
     return `https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Assets/Characters/Sprites/CHR_${paddedId}_00_s.png`;
@@ -350,7 +354,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
             return response.json();
         }));
 
-        console.log(data);
+        // console.log(data);
 
         const resultsTable = document.getElementById('resultsTable');
         resultsTable.innerHTML = ''; // Clear the table
@@ -454,8 +458,9 @@ document.getElementById('getTeam').addEventListener('click', async () => {
 
                     const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
                     if (selectedCharacterIds.every(id => characterIds.includes(id))) {
-                        console.log(player.PlayerName);
-                        console.log(playerId);
+                        // Debug
+                        // console.log(player.PlayerName);
+                        // console.log(playerId);
 
                         const tr = document.createElement('tr');
 
@@ -470,12 +475,9 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                         player.UserCharacterInfoList.forEach(info => {
                             const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
                             const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
-                            console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} ${region} Lv. ${info.Level} (${characterRarity})`);
 
-                            // // Debug
-                            // if (characterName === 'Soltina') {
-                            //     console.log(info.UserEquipmentDtoInfos);
-                            // }
+                            // Debug
+                            // console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} ${region} Lv. ${info.Level} (${characterRarity})`);
 
                             const characterDiv = document.createElement('div');
                             characterDiv.className = 'character-container'

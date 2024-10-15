@@ -8,8 +8,24 @@
 </head>
 <body>
     <header>
-        <h1>MementoMori Team Finder</h1>
+        <h1>MementoMori Team Finder (WIP)</h1>
     </header>
+    <br>
+    <div class="info-box" id="infoBox">
+        <button class="close-btn" id="closeInfoBox">X</button>
+        <p>This tool is designed to help you find teams for selected characters that have been used by top players in the game MementoMori. 
+        Only top 20 in Battle League and top 50 in Legend League is accounted for. It does not reflect the majority of players</p>
+        <h2>How to use</h2>
+        <p>- Select the character you would like to see the teams for</p>
+        <p>- Choose one or more leagues (not selecting anything defaults to having selecting all)</p>
+        <p>- Choose one or more servers (not selecting anything defaults to having selecting all)</p>
+        <p>- Click the "Find Teams" button to get the results</p>
+        <h2>Update 10/14</h2>
+        <p>- First version</p>
+        <h2>In the future</h2>
+        <p>- Optimize world searching so that it auto updates when a new world is added</p>
+    </div>
+    <br>
     <main>
     <div class="center-container">
         <div class="filter-dropdown">
@@ -66,7 +82,7 @@
     </div>
     <br>
     <div class="center-container">
-    <button id = "getTeam" class="btn-primary">Get Team</button>
+        <button id = "getTeam" class="btn-primary">Find Teams</button>
     </div>
     <br><br>
     <!-- <div id="progressBarContainer" class="progress-bar-container" style="display: none">
