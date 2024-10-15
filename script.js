@@ -137,8 +137,8 @@ const rarity = {
 const dropdownButton = document.querySelector('.dropdown-button');
 const dropdownContent = document.getElementById('characterDropdown');
 const soulColorFilter = document.getElementById('soulColorFilter');
-// const progressBarContainer = document.getElementById('progressBarContainer');
-// const progressBar = document.getElementById('progressBar');
+const progressBarContainer = document.getElementById('progressBarContainer');
+const progressBar = document.getElementById('progressBar');
 
 // Populate dropdown with character names and images
 const populateDropdown = (filter = '') => {
@@ -189,61 +189,59 @@ soulColorFilter.addEventListener('change', (event) => {
     populateDropdown(filter);
 });
 
-// dropdown.addEventListener('change', () => {
-//     const selectedOptions = Array.from(dropdown.selectedOptions);
-//     const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
+const worldsEndpoint = 'https://api.mentemori.icu/worlds';
 
-//     // const selectedOption = dropdown.options[dropdown.selectedIndex];
-//     // const characterId = selectedOption.value;
-//     const character = characterNames[selectedCharacterIds];
+const fetchWorldsData = async () => {
+    try {
+        const response = await fetch(worldsEndpoint);
+        if (!response.ok) {
+            throw new Error(`HTTP error, status = ${response.status}`);
+        }
+        const result = await response.json();
+        console.log(result.data);
+        return result.data;
+    } catch (error) {
+        console.error('Error fetching worlds:', error);
+        return null;
+    }
+}
 
-//     if (character) {
-//         characterImage.src = character.imageURL;
-//         characterImage.alt = character.name;
-//         characterImage.style.display = 'block';
-//     }
-
-//     console.log(selectedCharacterIds);
-// })
-
-document.getElementById('getTeam').addEventListener('click', async () => {
-    // const selectedOptions = Array.from(dropdown.selectedOptions);
-    // const selectedCharacterIds = selectedOptions.map(option => parseInt(option.value));
-    // console.log()
-
-    // if (selectedCharacterIds.length === 0) {
-    //     alert('Please select at least one character');
-    //     return;
-    // }
-
-    const selectedCharacterId = dropdownButton.dataset.value;
-    console.log(selectedCharacterId);
-    if (!selectedCharacterId) {
-        alert('Please select a character');
-        return;
+const processWorldsData = (data) => {
+    const worldsCount = {
+        JP: 0,
+        KR: 0,
+        ASIA: 0,
+        NA: 0,
+        EU: 0,
+        GLB: 0
     }
 
-    // Check if any league or region checkboxes are selected
-    const leagueCheckboxes = document.querySelectorAll('input[name="league"]');
-    const regionCheckboxes = document.querySelectorAll('input[name="region"]');
-    const isAnyLeagueSelected = Array.from(leagueCheckboxes).some(checkbox => checkbox.checked);
-    const isAnyRegionSelected = Array.from(regionCheckboxes).some(checkbox => checkbox.checked);
+    data.forEach(world => {
+        switch (world.server) {
+            case 'jp':
+                worldsCount.JP++;
+                break;
+            case 'kr':
+                worldsCount.KR++;
+                break;
+            case 'as':
+                worldsCount.ASIA++;
+                break;
+            case 'na':
+                worldsCount.NA++;
+                break;
+            case 'eu':
+                worldsCount.EU++;
+                break;
+            case 'gl':
+                worldsCount.GLB++;
+                break;
+        }
+    })
+    return worldsCount;
+}
 
-    // If no league or region checkboxes are selected, select all
-    if (!isAnyLeagueSelected) {
-        leagueCheckboxes.forEach(checkbox => checkbox.checked = true);
-    }
-
-    if (!isAnyRegionSelected) {
-        regionCheckboxes.forEach(checkbox => checkbox.checked = true);
-    }
-
-    const selectedCharacterIds = [parseInt(selectedCharacterId)];
-
-    // // Display progress bar
-    // progressBarContainer.style.display = 'block';
-    // progressBar.style.width = '0%';
-
+const generateUrls = (worldsCount) => {
     const urls = [];
     const LL = document.getElementById('LL').checked;
     const BL = document.getElementById('BL').checked;
@@ -253,6 +251,45 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     const EU = document.getElementById('EU').checked;
     const GLB = document.getElementById('GLB').checked;
     const JP = document.getElementById('JP').checked;
+
+    if (BL) {
+        if (JP) {
+            for (let i = 1; i <= worldsCount.JP; i++) {
+                const paddedId = String(i + 1000).padStart(4, '0');
+                urls.push(`https://api.mentemori.icu/${paddedId}/arena/latest`);
+            }
+        }
+        if (KR) {
+            for (let i = 1; i <= worldsCount.KR; i++) {
+                const paddedId = String(i + 2000).padStart(4, '0');
+                urls.push(`https://api.mentemori.icu/${paddedId}/arena/latest`);
+            }
+        }
+        if (ASIA) {
+            for (let i = 1; i <= worldsCount.ASIA; i++) {
+                const paddedId = String(i + 3000).padStart(4, '0');
+                urls.push(`https://api.mentemori.icu/${paddedId}/arena/latest`);
+            }
+        }
+        if (NA) {
+            for (let i = 1; i <= worldsCount.NA; i++) {
+                const paddedId = String(i + 4000).padStart(4, '0');
+                urls.push(`https://api.mentemori.icu/${paddedId}/arena/latest`);
+            }
+        }
+        if (EU) {
+            for (let i = 1; i <= worldsCount.EU; i++) {
+                const paddedId = String(i + 5000).padStart(4, '0');
+                urls.push(`https://api.mentemori.icu/${paddedId}/arena/latest`);
+            }
+        }
+        if (GLB) {
+            for (let i = 1; i <= worldsCount.GLB; i++) {
+                const paddedId = String(i + 6000).padStart(4, '0');
+                urls.push(`https://api.mentemori.icu/${paddedId}/arena/latest`);
+            }
+        }
+    }
 
     if (LL) {
         if (KR) {
@@ -291,62 +328,73 @@ document.getElementById('getTeam').addEventListener('click', async () => {
             }
         }
     }
+    return urls;
+}
 
-    // Need to update every time a new world is added
-    if (BL) {
-        if (JP) {
-            for (let i = 1; i <= 131; i++) {
-                const paddedId = String(i).padStart(3, '0');
-                urls.push(`https://api.mentemori.icu/1${paddedId}/arena/latest`);
-            }
-        }
-        if (KR) {
-            for (let i = 1; i <= 18; i++) {
-                const paddedId = String(i).padStart(3, '0');
-                urls.push(`https://api.mentemori.icu/2${paddedId}/arena/latest`);
-            }
-        }
-        if (ASIA) {
-            for (let i = 1; i <= 19; i++) {
-                const paddedId = String(i).padStart(3, '0');
-                urls.push(`https://api.mentemori.icu/3${paddedId}/arena/latest`);
-            }
-        }
-        if (NA) {
-            for (let i = 1; i <= 20; i++) {
-                const paddedId = String(i).padStart(3, '0');
-                urls.push(`https://api.mentemori.icu/4${paddedId}/arena/latest`);
-            }
-        }
-        if (EU) {
-            for (let i = 1; i <= 9; i++) {
-                const paddedId = String(i).padStart(3, '0');
-                urls.push(`https://api.mentemori.icu/5${paddedId}/arena/latest`);
-            }
-        }
-        if (GLB) {
-            for (let i = 1; i <= 25; i++) {
-                const paddedId = String(i).padStart(3, '0');
-                urls.push(`https://api.mentemori.icu/6${paddedId}/arena/latest`);
-            }
+document.getElementById('getTeam').addEventListener('click', async () => {
+    // fetchWorldsData();
+    const worldsData = await fetchWorldsData();
+    if (!worldsData) {
+        alert('Error fetching worlds data');
+        return;
+    }
+    const selectedCharacterId = dropdownButton.dataset.value;
+    console.log(selectedCharacterId);
+    if (!selectedCharacterId) {
+        alert('Please select a character');
+        return;
+    }
+
+    // Check if any league or region checkboxes are selected
+    const leagueCheckboxes = document.querySelectorAll('input[name="league"]');
+    const regionCheckboxes = document.querySelectorAll('input[name="region"]');
+    const isAnyLeagueSelected = Array.from(leagueCheckboxes).some(checkbox => checkbox.checked);
+    const isAnyRegionSelected = Array.from(regionCheckboxes).some(checkbox => checkbox.checked);
+
+    // If no league or region checkboxes are selected, select all
+    if (!isAnyLeagueSelected) {
+        leagueCheckboxes.forEach(checkbox => checkbox.checked = true);
+    }
+
+    if (!isAnyRegionSelected) {
+        regionCheckboxes.forEach(checkbox => checkbox.checked = true);
+    }
+
+    const selectedCharacterIds = [parseInt(selectedCharacterId)];
+
+    // // Display progress bar
+    progressBarContainer.style.display = 'block';
+    progressBar.style.width = '0%';
+
+    const worldsCount = processWorldsData(worldsData);
+    const urls = generateUrls(worldsCount);
+
+    // Progress bar
+    const totalUrls = urls.length;
+    let completedUrls = 0;
+
+    const updateProgressBar = () => {
+        const progress = (completedUrls / totalUrls) * 100;
+        progressBar.style.width = `${progress}%`;
+        if (completedUrls < totalUrls) {
+            requestAnimationFrame(updateProgressBar);
+        } else {
+            progressBar.style.width = '100%'; // Ensure progress bar is at 100% when all requests are completed
+            setTimeout(() => {
+                progressBarContainer.style.display = 'none';
+            }, 250); // Hide progress bar after 250ms
         }
     }
 
-    // // Progress bar
-    // const totalUrls = urls.length;
-    // for (let i = 0; i < totalUrls; i++) {
-    //     await fetch(urls[i]);
-    //     const progress = ((i + 1) / totalUrls) * 100;
-    //     progressBar.style.width = `${progress}%`;
-    // }
-
-    // progressBarContainer.style.display = 'none';
-
-
+    requestAnimationFrame(updateProgressBar);
 
     try {
-        // const response = await fetch('https://api.mentemori.icu/wg/37/legend/latest');
-        const responses = await Promise.all(urls.map(url => fetch(url)));
+        // const responses = await Promise.all(urls.map(url => fetch(url)));
+        const responses = await Promise.all(urls.map(async (url) => {
+            const response = await fetch(url);
+            completedUrls++;
+            return response;
+        }));
         const data = await Promise.all(responses.map(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error, status = ${response.status}`);
@@ -438,8 +486,6 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                 const regionCode = url.match(/https:\/\/api\.mentemori\.icu\/wg\/(\d+)/)[1];
                 region = regionMappingLL[regionCode] || 'Unknown Region';
             }
-            // const regionCodeBL = urls[index].match(/https:\/\/api\.mentemori\.icu\/(\d)/)[1];
-            // const regionBL = regionMappingBL[regionCodeBL];
 
             apiData.data.forEach(player => {
                 /*
