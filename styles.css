@@ -1,13 +1,10 @@
-/* body {
-    font-family: 'Alegreya';
-} */
-
 html {
     height: 150%;
 }
 
 body {
     background-color: #eae4da;
+    /* font-family: 'Alegreya', serif; */
 }
 
 header {
@@ -193,7 +190,7 @@ th {
     height: 45px;
 }
 
-/* ----------------Progress bar----------------
+/* ----------------Progress bar---------------- */
 .progress-bar-container {
     width: 80%;
     background-color: #ccc;
@@ -210,4 +207,4 @@ th {
     background-color: #4CAF50;
     border-radius: 10px;
     transition: width 0.4s ease;
-} */
+}
