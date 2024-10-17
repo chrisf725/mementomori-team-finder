@@ -198,7 +198,7 @@ const fetchWorldsData = async () => {
             throw new Error(`HTTP error, status = ${response.status}`);
         }
         const result = await response.json();
-        console.log(result.data);
+        // console.log(result.data);
         return result.data;
     } catch (error) {
         console.error('Error fetching worlds:', error);
@@ -474,6 +474,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
 
         // Use a Set to track unique players
         const uniquePlayers = new Set();
+        const playerData = [];
 
         data.forEach((apiData, index) => {
             const url = urls[index];
@@ -504,55 +505,67 @@ document.getElementById('getTeam').addEventListener('click', async () => {
 
                     const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
                     if (selectedCharacterIds.every(id => characterIds.includes(id))) {
-                        // Debug
-                        // console.log(player.PlayerName);
-                        // console.log(playerId);
-
-                        const tr = document.createElement('tr');
-
-                        // Player Name
-                        const playerNameTd = document.createElement('td');
-                        // playerNameTd.textContent = player.PlayerName;
-                        const world = parseInt(playerId.toString().slice(-3), 10); // Get the last three digits of the playerId which represents the world
-                        playerNameTd.innerHTML = `${player.PlayerName}<br><small>${region} W${world}</small>`;
-                        tr.appendChild(playerNameTd);
-
-                        const teamTd = document.createElement('td');
-                        player.UserCharacterInfoList.forEach(info => {
-                            const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
-                            const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
-
-                            // Debug
-                            // console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} ${region} Lv. ${info.Level} (${characterRarity})`);
-
-                            const characterDiv = document.createElement('div');
-                            characterDiv.className = 'character-container'
-
-                            const rarityDiv = document.createElement('div');
-                            rarityDiv.textContent = characterRarity;
-                            characterDiv.appendChild(rarityDiv);
-
-                            const nameDiv = document.createElement('div');
-                            nameDiv.textContent = characterName;
-                            characterDiv.appendChild(nameDiv);
-
-                            const levelDiv = document.createElement('div');
-                            levelDiv.textContent = `Lv. ${info.Level}`;
-                            characterDiv.appendChild(levelDiv);
-
-                            const img = document.createElement('img');
-                            img.src = characterNames[info.CharacterId]?.imageURL;
-                            img.alt = characterName;
-                            characterDiv.appendChild(img);
-
-                            teamTd.appendChild(characterDiv);
-                        });
-
-                        tr.appendChild(teamTd);
-                        tbody.appendChild(tr);
+                        const highestLevel = Math.max(...player.UserCharacterInfoList.map(info => info.Level));
+                        playerData.push({
+                            playerName: player.PlayerName,
+                            playerId,
+                            region,
+                            highestLevel,
+                            characters: player.UserCharacterInfoList
+                        })
                     }
                 }
             });
+        });
+        // Debug
+        // console.log(player.PlayerName);
+        // console.log(playerId);
+        playerData.sort((a, b) => b.highestLevel - a.highestLevel);
+
+        playerData.forEach(player => {
+            const tr = document.createElement('tr');
+
+            // Player Name
+            const playerNameTd = document.createElement('td');
+            // playerNameTd.textContent = player.PlayerName;
+            const world = parseInt(player.playerId.toString().slice(-3), 10); // Get the last three digits of the playerId which represents the world
+            playerNameTd.innerHTML = `${player.playerName}<br><small>${player.region} W${world}</small>`;
+            tr.appendChild(playerNameTd);
+
+            const teamTd = document.createElement('td');
+            player.characters.forEach(info => {
+                const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
+                const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
+
+                // Debug
+                // console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} ${region} Lv. ${info.Level} (${characterRarity})`);
+
+                const characterDiv = document.createElement('div');
+                characterDiv.className = 'character-container'
+
+                const rarityDiv = document.createElement('div');
+                rarityDiv.textContent = characterRarity;
+                characterDiv.appendChild(rarityDiv);
+
+                const nameDiv = document.createElement('div');
+                nameDiv.textContent = characterName;
+                characterDiv.appendChild(nameDiv);
+
+                const levelDiv = document.createElement('div');
+                levelDiv.textContent = `Lv. ${info.Level}`;
+                characterDiv.appendChild(levelDiv);
+
+                const img = document.createElement('img');
+                img.src = characterNames[info.CharacterId]?.imageURL;
+                img.alt = characterName;
+                characterDiv.appendChild(img);
+
+                teamTd.appendChild(characterDiv);
+            });
+
+            tr.appendChild(teamTd);
+            tbody.appendChild(tr);
+            
         })
 
         table.appendChild(thead);
