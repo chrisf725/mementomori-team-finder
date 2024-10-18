@@ -475,6 +475,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         // Use a Set to track unique players
         const uniquePlayers = new Set();
         const playerData = [];
+        const teammateCounts = {};
 
         data.forEach((apiData, index) => {
             const url = urls[index];
@@ -512,6 +513,16 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                             region,
                             highestLevel,
                             characters: player.UserCharacterInfoList
+                        })
+
+                        // Count teammates
+                        player.UserCharacterInfoList.forEach(info => {
+                            if (info.CharacterId !== selectedCharacterId) {
+                                if (!teammateCounts[info.CharacterId]) {
+                                    teammateCounts[info.CharacterId] = 0;
+                                }
+                                teammateCounts[info.CharacterId]++;
+                            }
                         })
                     }
                 }
@@ -571,6 +582,65 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         table.appendChild(thead);
         table.appendChild(tbody);
         resultsTable.appendChild(table);
+
+        // Find top 10 most used teammates
+        const sortedTeammates = Object.entries(teammateCounts)
+        .filter(([characterId]) => characterId !== selectedCharacterId.toString()) // Filter out the selected character
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+        // console.log(`Top 10 Most Used Teammates for ${characterNames[selectedCharacterId].name}:`);
+        sortedTeammates.forEach(([characterId, count], index) => {
+            const characterName = characterNames[characterId]?.name || 'Unknown Character';
+            console.log(`${index + 1}. ${characterName}: ${count}`);
+        })
+
+        // Display top 10 most used teammates
+        const topTeammatesContainer = document.getElementById('topTeammates');
+        topTeammatesContainer.innerHTML = `<h3>Top 10 Most Used Teammates for ${characterNames[selectedCharacterId].name}</h3>`;
+        const topTeammatesList = document.createElement('ol');
+        const maxCount = sortedTeammates[0][1]; // Get the count of the most used teammate
+
+        sortedTeammates.forEach(([characterId, count], index) => {
+            const listItem = document.createElement('li');
+            const characterName = characterNames[characterId]?.name || 'Unknown Character';
+            const characterImageUrl = generateImageURL(characterId);
+
+            const img = document.createElement('img');
+            img.src = characterImageUrl;
+            img.alt = characterName;
+            img.style.width = '50px';
+            img.style.height = '50px';
+            img.style.marginRight = '10px';
+
+            const textContainer = document.createElement('div');
+            textContainer.style.display = 'flex';
+            textContainer.style.flexDirection = 'column';
+            textContainer.style.alignItems = 'flex-start';
+
+            const nameText = document.createElement('span');
+            nameText.textContent = `${index + 1}) ${characterName}: ${count}`;
+            textContainer.appendChild(nameText);
+
+            const barContainer = document.createElement('div');
+            barContainer.style.display = 'inline-block';
+            barContainer.style.width = '200px';
+            barContainer.style.height = '15px';
+            barContainer.style.backgroundColor = '#ccc';
+
+            const bar = document.createElement('div');
+            bar.style.width = `${(count / maxCount) * 100}%`;
+            bar.style.height = '100%';
+            bar.style.backgroundColor = '#76c7c0';
+
+            barContainer.appendChild(bar);
+            textContainer.appendChild(barContainer);
+            
+            listItem.appendChild(img);
+            listItem.appendChild(textContainer);
+            topTeammatesList.appendChild(listItem);
+        })
+        topTeammatesContainer.appendChild(topTeammatesList);
 
     } catch (error) {
         console.error('Error fetching team:', error);

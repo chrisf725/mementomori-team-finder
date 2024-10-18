@@ -131,6 +131,27 @@ th {
     /* border: 1px solid black; */
 }
 
+#resultsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+}
+
+#topTeammates {
+    width: 100%;
+}
+
+#topTeammates li {
+    display: flex;
+    align-items: center;
+}
+
+#topTeammates ol {
+    padding: 0;
+}
+
 /* ----------------Custom dropdown---------------- */
 .custom-dropdown {
     position: relative;
