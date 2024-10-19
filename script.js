@@ -93,7 +93,7 @@ const characterNames = {
     83: {name: '', imageURL: generateImageURL(83)},
     84: {name: 'Liselotte', imageURL: generateImageURL(84), soulColor: 'Azure'},
     85: {name: 'Matilda', imageURL: generateImageURL(85), soulColor: 'Crimson'},
-    86: {name: '', imageURL: generateImageURL(86)},
+    86: {name: 'Meria', imageURL: generateImageURL(86), soulColor: 'Radiance'},
     87: {name: '', imageURL: generateImageURL(87)},
     88: {name: 'Rosalie (Radiance)', imageURL: generateImageURL(88), soulColor: 'Radiance'},
     89: {name: '', imageURL: generateImageURL(89)},
@@ -331,8 +331,169 @@ const generateUrls = (worldsCount) => {
     return urls;
 }
 
+const itemsPerPage = 6;
+let currentPage = 1;
+let filteredResults = [];
+
+const renderTable = (data, page) => {
+    // console.log('Rendering table', data);
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedData = data.slice(startIndex, endIndex);
+
+    const resultsTable = document.getElementById('resultsTable');
+    resultsTable.innerHTML = ''; // Clear the table
+
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+
+    const headers = ['Player Name', 'Team'];
+    const tr = document.createElement('tr');
+    headers.forEach((header, index) => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        if (index === 0) {
+            th.style.width = '15%';
+        } else if (index === 1) {
+            th.style.width = '85%';
+        }
+        tr.appendChild(th);
+    })
+    thead.appendChild(tr);
+
+    paginatedData.forEach(player => {
+        const tr = document.createElement('tr');
+
+        const playerNameId = document.createElement('td');
+        playerNameId.style.width = '15%';
+        const world = parseInt(player.playerId.toString().slice(-3), 10); // Get the last three digits of the playerId which represents the world
+        playerNameId.innerHTML = `${player.playerName}<br><small>${player.region} W${world}</small>`;
+        tr.appendChild(playerNameId);
+
+        const teamTd = document.createElement('td');
+        teamTd.style.width = '85%';
+        player.characters.forEach(info => {
+            const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
+            const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
+
+            const characterDiv = document.createElement('div');
+            characterDiv.className = 'character-container'
+
+            const rarityDiv = document.createElement('div');
+            rarityDiv.textContent = characterRarity;
+            characterDiv.appendChild(rarityDiv);
+
+            const nameDiv = document.createElement('div');
+            nameDiv.textContent = characterName;
+            characterDiv.appendChild(nameDiv);
+
+            const levelDiv = document.createElement('div');
+            levelDiv.textContent = `Lv. ${info.Level}`;
+            characterDiv.appendChild(levelDiv);
+
+            const img = document.createElement('img');
+            img.src = characterNames[info.CharacterId]?.imageURL;
+            img.alt = characterName;
+            characterDiv.appendChild(img);
+
+            teamTd.appendChild(characterDiv);
+        });
+        tr.appendChild(teamTd);
+        tbody.appendChild(tr);
+
+        
+    })
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    resultsTable.appendChild(table);
+}
+
+const renderPaginationControls = (totalItems) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const paginationControls = document.getElementById('paginationControls');
+    paginationControls.innerHTML = ''; // Clear the pagination container
+
+    // Previous button
+    const prevButton = document.createElement('button');
+    prevButton.textContent = '<';
+    prevButton.disabled = currentPage === 1;
+    prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable(filteredResults, currentPage);
+            renderPaginationControls(filteredResults.length);
+        }
+    })
+    paginationControls.appendChild(prevButton);
+
+    const pageInputContainer = document.createElement('div');
+    pageInputContainer.style.display = 'inline-flex';
+    pageInputContainer.style.alignItems = 'center';
+
+    // Page number input
+    const pageInput = document.createElement('input');
+    pageInput.type = 'number';
+    pageInput.min = 1;
+    pageInput.max = totalPages;
+    pageInput.value = currentPage;
+    pageInput.style.width = '40px';
+    pageInput.style.textAlign = 'center';
+    pageInput.addEventListener('change', () => {
+        const pageNumber = parseInt(pageInput.value, 10);
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            currentPage = pageNumber;
+            renderTable(filteredResults, currentPage);
+            renderPaginationControls(filteredResults.length);
+        } else {
+            pageInput.value = currentPage; // Reset to current page if out of range
+        }
+    })
+    pageInputContainer.appendChild(pageInput);
+
+    const totalPagesSpan = document.createElement('span');
+    totalPagesSpan.textContent = ` / ${totalPages}`;
+    pageInputContainer.appendChild(totalPagesSpan);
+
+    paginationControls.appendChild(pageInputContainer);
+
+    // Next button
+    const nextButton = document.createElement('button');
+    nextButton.textContent = '>';
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTable(filteredResults, currentPage);
+            renderPaginationControls(filteredResults.length);
+        }
+    })
+    paginationControls.appendChild(nextButton);
+}
+
+const filterResults = (query) => {
+    if (!query) {
+        filteredResults = playerData;
+    } else {
+        filteredResults = playerData.filter(player =>
+            player.characters.some(character => {
+                return characterNames[character.CharacterId]?.name.toLowerCase().includes(query.toLowerCase())
+            })
+        )
+    }
+    currentPage = 1;
+    renderTable(filteredResults, currentPage);
+    renderPaginationControls(filteredResults.length);
+}
+
+document.getElementById('searchInput').addEventListener('input', (event) => {
+    const query = event.target.value;
+    filterResults(query);
+})
+
 document.getElementById('getTeam').addEventListener('click', async () => {
     // fetchWorldsData();
+    currentPage = 1;
     const worldsData = await fetchWorldsData();
     if (!worldsData) {
         alert('Error fetching worlds data');
@@ -362,7 +523,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
 
     const selectedCharacterIds = [parseInt(selectedCharacterId)];
 
-    // // Display progress bar
+    // Display progress bar
     progressBarContainer.style.display = 'block';
     progressBar.style.width = '0%';
 
@@ -389,36 +550,33 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     requestAnimationFrame(updateProgressBar);
 
     try {
-        // const responses = await Promise.all(urls.map(url => fetch(url)));
+        // Fetch BL and LL URLs. If the URL returns a 404 (world exists but no data), ignore it.
         const responses = await Promise.all(urls.map(async (url) => {
-            const response = await fetch(url);
-            completedUrls++;
-            return response;
-        }));
-        const data = await Promise.all(responses.map(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error, status = ${response.status}`);
+            try {
+                const response = await fetch(url);
+                if (response.status === 404)  {
+                    console.warn(`Data not available for ${url}`);
+                    completedUrls++;
+                    return null;
+                }
+                completedUrls++;
+                return response;
+            } catch (error) {
+                console.error(`Error fetching data for ${url}`, error);
+                return null;
             }
-            return response.json();
         }));
+
+        const data = await Promise.all(responses.map(response => {
+            if (response && response.ok) {
+                return response.json();
+            }
+            return null;
+        }))
+
+        const filteredData = data.filter(item => item !== null);
 
         // console.log(data);
-
-        const resultsTable = document.getElementById('resultsTable');
-        resultsTable.innerHTML = ''; // Clear the table
-
-        const table = document.createElement('table');
-        const thead = document.createElement('thead');
-        const tbody = document.createElement('tbody');
-
-        const headers = ['Player Name', 'Team'];
-        const tr = document.createElement('tr');
-        headers.forEach(header => {
-            const th = document.createElement('th');
-            th.textContent = header;
-            tr.appendChild(th);
-        });
-        thead.appendChild(tr);
 
         const regionMappingBL = {
             '1': 'Japan',
@@ -474,9 +632,10 @@ document.getElementById('getTeam').addEventListener('click', async () => {
 
         // Use a Set to track unique players
         const uniquePlayers = new Set();
-        const playerData = [];
+        playerData = [];
+        const teammateCounts = {};
 
-        data.forEach((apiData, index) => {
+        filteredData.forEach((apiData, index) => {
             const url = urls[index];
             let region = 'Unknown Region';
 
@@ -513,6 +672,16 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                             highestLevel,
                             characters: player.UserCharacterInfoList
                         })
+
+                        // Count teammates
+                        player.UserCharacterInfoList.forEach(info => {
+                            if (info.CharacterId !== selectedCharacterId) {
+                                if (!teammateCounts[info.CharacterId]) {
+                                    teammateCounts[info.CharacterId] = 0;
+                                }
+                                teammateCounts[info.CharacterId]++;
+                            }
+                        })
                     }
                 }
             });
@@ -522,55 +691,119 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         // console.log(playerId);
         playerData.sort((a, b) => b.highestLevel - a.highestLevel);
 
+        // Initially render the full data
+        filteredResults = playerData;
+        // Render the results table
+        renderTable(filteredResults, currentPage);
+        // Render pagination controls
+        renderPaginationControls(filteredResults.length);
+
+        document.getElementById('searchInput').style.display = 'block';
+
+        let selectedCharacterCount = 0;
         playerData.forEach(player => {
-            const tr = document.createElement('tr');
+            player.characters.forEach(character => {
+                if (character.CharacterId === parseInt(selectedCharacterId)) {
+                    selectedCharacterCount++;
+                }
+            })
+        })
+        console.log(selectedCharacterCount);
 
-            // Player Name
-            const playerNameTd = document.createElement('td');
-            // playerNameTd.textContent = player.PlayerName;
-            const world = parseInt(player.playerId.toString().slice(-3), 10); // Get the last three digits of the playerId which represents the world
-            playerNameTd.innerHTML = `${player.playerName}<br><small>${player.region} W${world}</small>`;
-            tr.appendChild(playerNameTd);
+        const selectedCharacterCountContainer = document.getElementById('selectedCharacterCountContainer');
+        const cname = characterNames[selectedCharacterId].name;
+        const endsWithS = cname.endsWith('s') ? 'es' : 's';
+        selectedCharacterCountContainer.innerHTML = `<p>Total: ${selectedCharacterCount} ${characterNames[selectedCharacterId].name}${endsWithS}</p>`;
 
-            const teamTd = document.createElement('td');
-            player.characters.forEach(info => {
-                const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
-                const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
+        // Find most used teammates
+        const sortedTeammates = Object.entries(teammateCounts)
+        .filter(([characterId]) => characterId !== selectedCharacterId.toString()) // Filter out the selected character
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 100);
 
-                // Debug
-                // console.log(`Character ID: ${info.CharacterId}, Name: ${characterName} ${region} Lv. ${info.Level} (${characterRarity})`);
-
-                const characterDiv = document.createElement('div');
-                characterDiv.className = 'character-container'
-
-                const rarityDiv = document.createElement('div');
-                rarityDiv.textContent = characterRarity;
-                characterDiv.appendChild(rarityDiv);
-
-                const nameDiv = document.createElement('div');
-                nameDiv.textContent = characterName;
-                characterDiv.appendChild(nameDiv);
-
-                const levelDiv = document.createElement('div');
-                levelDiv.textContent = `Lv. ${info.Level}`;
-                characterDiv.appendChild(levelDiv);
-
-                const img = document.createElement('img');
-                img.src = characterNames[info.CharacterId]?.imageURL;
-                img.alt = characterName;
-                characterDiv.appendChild(img);
-
-                teamTd.appendChild(characterDiv);
-            });
-
-            tr.appendChild(teamTd);
-            tbody.appendChild(tr);
-            
+        // console.log(`Top 10 Most Used Teammates for ${characterNames[selectedCharacterId].name}:`);
+        sortedTeammates.forEach(([characterId, count], index) => {
+            const characterName = characterNames[characterId]?.name || 'Unknown Character';
+            // console.log(`${index + 1}. ${characterName}: ${count}`);
         })
 
-        table.appendChild(thead);
-        table.appendChild(tbody);
-        resultsTable.appendChild(table);
+        // Display most used teammates in descending order
+        const topTeammatesContainer = document.getElementById('topTeammates');
+        topTeammatesContainer.innerHTML = `<h3>Most Used Teammates for ${characterNames[selectedCharacterId].name}</h3>`;
+        const topTeammatesList = document.createElement('ol');
+        const maxCount = sortedTeammates[0][1]; // Get the count of the most used teammate
+
+        const renderTeammatesList = (teammates, limit) => {
+            topTeammatesList.innerHTML = ''; // Clear the list
+        
+            teammates.slice(0, limit).forEach(([characterId, count], index) => {
+                const listItem = document.createElement('li');
+                const characterName = characterNames[characterId]?.name || 'Unknown Character';
+                const characterImageUrl = generateImageURL(characterId);
+
+                const img = document.createElement('img');
+                img.src = characterImageUrl;
+                img.alt = characterName;
+                img.style.width = '50px';
+                img.style.height = '50px';
+                img.style.marginRight = '10px';
+
+                const textContainer = document.createElement('div');
+                textContainer.style.display = 'flex';
+                textContainer.style.flexDirection = 'column';
+                textContainer.style.alignItems = 'flex-start';
+
+                const nameText = document.createElement('span');
+                nameText.textContent = `${index + 1}) ${characterName}: ${count} (${((count / selectedCharacterCount) * 100).toFixed(2)}%)`;
+                textContainer.appendChild(nameText);
+
+                const barContainer = document.createElement('div');
+                barContainer.style.display = 'inline-block';
+                barContainer.style.width = '200px';
+                barContainer.style.height = '15px';
+                barContainer.style.backgroundColor = '#ccc';
+
+                const bar = document.createElement('div');
+                bar.style.width = `${(count / selectedCharacterCount) * 100}%`;
+                bar.style.height = '100%';
+                bar.style.backgroundColor = '#76c7c0';
+
+                barContainer.appendChild(bar);
+                textContainer.appendChild(barContainer);
+                
+                listItem.appendChild(img);
+                listItem.appendChild(textContainer);
+                topTeammatesList.appendChild(listItem);
+        })
+    }
+
+    // Initially render top 10 teammates
+    renderTeammatesList(sortedTeammates, 10);
+
+    // Create and append the "Show All" button
+    const showAllButton = document.createElement('button');
+    showAllButton.textContent = 'Show All';
+    showAllButton.className = 'show-toggle';
+    showAllButton.addEventListener('click', () => {
+        renderTeammatesList(sortedTeammates, sortedTeammates.length);
+        showAllButton.style.display = 'none';
+        showLessButton.style.display = 'inline';
+    })
+
+    topTeammatesContainer.appendChild(topTeammatesList);
+    topTeammatesContainer.appendChild(showAllButton);
+
+    // Create and append the "Show Less" button
+    const showLessButton = document.createElement('button');
+    showLessButton.textContent = 'Show Less';
+    showLessButton.className = 'show-toggle';
+    showLessButton.style.display = 'none';
+    showLessButton.addEventListener('click', () => {
+        renderTeammatesList(sortedTeammates, 10);
+        showLessButton.style.display = 'none';
+        showAllButton.style.display = 'inline';
+    })
+    topTeammatesContainer.appendChild(showLessButton);
 
     } catch (error) {
         console.error('Error fetching team:', error);

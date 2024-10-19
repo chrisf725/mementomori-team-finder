@@ -14,14 +14,16 @@
     <div class="info-box" id="infoBox">
         <button class="close-btn" id="closeInfoBox">X</button>
         <p>This tool is designed to help you find teams for selected characters that have been used by top players in the game MementoMori. 
-        Only top 20 in Battle League and top 50 in Legend League is accounted for. It does not reflect the majority of players</p>
+        Only top 20 in Battle League and top 50 in Legend League is accounted for. It does not reflect the majority of players.</p>
+        <p>This was made using the API provided by <a href="https://mentemori.icu/">this site</a>.</p>
         <h2>How to use</h2>
         <p>- Select the character you would like to see the teams for</p>
         <p>- Choose one or more leagues (not selecting anything defaults to having selecting all)</p>
         <p>- Choose one or more servers (not selecting anything defaults to having selecting all)</p>
         <p>- Click the "Find Teams" button to get the results</p>
-        <h2>Update 10/16</h2>
-        <p>- Results now sort by level (descending)</p>
+        <p>- Search for a specific teammate with the chosen character to see teams containing those two characters</p>
+        <h2>Update 10/19</h2>
+        <p>- Added Meria</p>
     </div>
     <br>
     <main>
@@ -86,7 +88,18 @@
     <div id="progressBarContainer" class="progress-bar-container" style="display: none">
         <div id="progressBar" class="progress-bar"></div>
     </div>
-    <div id="resultsTable"></div>
+    <div id="resultsHeader">
+        <div id="searchContainer">
+            <input type="text" id="searchInput" placeholder="Search for a teammate...">
+        </div>
+        <div id="selectedCharacterCountContainer"></div>
+    </div>
+    <div id="resultsContainer">
+        
+        <div id="resultsTable"></div>
+        <div id="paginationControls"></div>
+        <div id="topTeammates"></div>
+    </div>
     </main>
 
     <script src="script.js"></script>
