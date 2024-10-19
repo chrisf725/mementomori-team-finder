@@ -550,18 +550,6 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     requestAnimationFrame(updateProgressBar);
 
     try {
-        // const responses = await Promise.all(urls.map(async (url) => {
-        //     const response = await fetch(url);
-        //     completedUrls++;
-        //     return response;
-        // }));
-        // const data = await Promise.all(responses.map(response => {
-        //     if (!response.ok) {
-        //         throw new Error(`HTTP error, status = ${response.status}`);
-        //     }
-        //     return response.json();
-        // }));
-
         // Fetch BL and LL URLs. If the URL returns a 404 (world exists but no data), ignore it.
         const responses = await Promise.all(urls.map(async (url) => {
             try {
