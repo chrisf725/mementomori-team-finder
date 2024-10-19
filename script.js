@@ -333,6 +333,7 @@ const generateUrls = (worldsCount) => {
 
 const itemsPerPage = 6;
 let currentPage = 1;
+let filteredResults = [];
 
 const renderTable = (data, page) => {
     // console.log('Rendering table', data);
@@ -349,9 +350,14 @@ const renderTable = (data, page) => {
 
     const headers = ['Player Name', 'Team'];
     const tr = document.createElement('tr');
-    headers.forEach(header => {
+    headers.forEach((header, index) => {
         const th = document.createElement('th');
         th.textContent = header;
+        if (index === 0) {
+            th.style.width = '15%';
+        } else if (index === 1) {
+            th.style.width = '85%';
+        }
         tr.appendChild(th);
     })
     thead.appendChild(tr);
@@ -360,11 +366,13 @@ const renderTable = (data, page) => {
         const tr = document.createElement('tr');
 
         const playerNameId = document.createElement('td');
+        playerNameId.style.width = '15%';
         const world = parseInt(player.playerId.toString().slice(-3), 10); // Get the last three digits of the playerId which represents the world
         playerNameId.innerHTML = `${player.playerName}<br><small>${player.region} W${world}</small>`;
         tr.appendChild(playerNameId);
 
         const teamTd = document.createElement('td');
+        teamTd.style.width = '85%';
         player.characters.forEach(info => {
             const characterName = characterNames[info.CharacterId]?.name || 'Unknown Character';
             const characterRarity = rarity[info.RarityFlags] || 'Unknown Rarity';
@@ -413,8 +421,8 @@ const renderPaginationControls = (totalItems) => {
     prevButton.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
-            renderTable(playerData, currentPage);
-            renderPaginationControls(totalItems);
+            renderTable(filteredResults, currentPage);
+            renderPaginationControls(filteredResults.length);
         }
     })
     paginationControls.appendChild(prevButton);
@@ -435,8 +443,8 @@ const renderPaginationControls = (totalItems) => {
         const pageNumber = parseInt(pageInput.value, 10);
         if (pageNumber >= 1 && pageNumber <= totalPages) {
             currentPage = pageNumber;
-            renderTable(playerData, currentPage);
-            renderPaginationControls(totalItems);
+            renderTable(filteredResults, currentPage);
+            renderPaginationControls(filteredResults.length);
         } else {
             pageInput.value = currentPage; // Reset to current page if out of range
         }
@@ -456,12 +464,32 @@ const renderPaginationControls = (totalItems) => {
     nextButton.addEventListener('click', () => {
         if (currentPage < totalPages) {
             currentPage++;
-            renderTable(playerData, currentPage);
-            renderPaginationControls(totalItems);
+            renderTable(filteredResults, currentPage);
+            renderPaginationControls(filteredResults.length);
         }
     })
     paginationControls.appendChild(nextButton);
 }
+
+const filterResults = (query) => {
+    if (!query) {
+        filteredResults = playerData;
+    } else {
+        filteredResults = playerData.filter(player =>
+            player.characters.some(character => {
+                return characterNames[character.CharacterId]?.name.toLowerCase().includes(query.toLowerCase())
+            })
+        )
+    }
+    currentPage = 1;
+    renderTable(filteredResults, currentPage);
+    renderPaginationControls(filteredResults.length);
+}
+
+document.getElementById('searchInput').addEventListener('input', (event) => {
+    const query = event.target.value;
+    filterResults(query);
+})
 
 document.getElementById('getTeam').addEventListener('click', async () => {
     // fetchWorldsData();
@@ -675,11 +703,14 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         // console.log(playerId);
         playerData.sort((a, b) => b.highestLevel - a.highestLevel);
 
+        // Initially render the full data
+        filteredResults = playerData;
         // Render the results table
-        renderTable(playerData, currentPage);
-
+        renderTable(filteredResults, currentPage);
         // Render pagination controls
-        renderPaginationControls(playerData.length);
+        renderPaginationControls(filteredResults.length);
+
+        document.getElementById('searchInput').style.display = 'block';
 
         let selectedCharacterCount = 0;
         playerData.forEach(player => {
@@ -690,6 +721,11 @@ document.getElementById('getTeam').addEventListener('click', async () => {
             })
         })
         console.log(selectedCharacterCount);
+
+        const selectedCharacterCountContainer = document.getElementById('selectedCharacterCountContainer');
+        const cname = characterNames[selectedCharacterId].name;
+        const endsWithS = cname.endsWith('s') ? 'es' : 's';
+        selectedCharacterCountContainer.innerHTML = `<p>Total: ${selectedCharacterCount} ${characterNames[selectedCharacterId].name}${endsWithS}</p>`;
 
         // Find most used teammates
         const sortedTeammates = Object.entries(teammateCounts)
@@ -759,6 +795,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     // Create and append the "Show All" button
     const showAllButton = document.createElement('button');
     showAllButton.textContent = 'Show All';
+    showAllButton.className = 'show-toggle';
     showAllButton.addEventListener('click', () => {
         renderTeammatesList(sortedTeammates, sortedTeammates.length);
         showAllButton.style.display = 'none';
@@ -771,6 +808,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     // Create and append the "Show Less" button
     const showLessButton = document.createElement('button');
     showLessButton.textContent = 'Show Less';
+    showLessButton.className = 'show-toggle';
     showLessButton.style.display = 'none';
     showLessButton.addEventListener('click', () => {
         renderTeammatesList(sortedTeammates, 10);

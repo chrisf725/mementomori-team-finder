@@ -95,9 +95,34 @@ main {
     background-color: #d1c1b0;
 }
 
+/* ----------------Search filter and total display---------------- */
+#searchInput {
+    width: 30%;
+    height: 20px;
+    padding: 3px;
+    display: none;
+}
+
+#resultsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#searchContainer {
+    flex: 1;
+}
+
+#selectedCharacterCountContainer {
+    flex: 1;
+    text-align: right;
+}
 /* ----------------Results Table---------------- */
 table {
     border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
 }
 
 th, td {
@@ -113,6 +138,7 @@ th {
 #resultsTable {
     margin: 0 auto;
     display: table;
+    width: 100%;
 }
 
 .character-container {
@@ -120,7 +146,7 @@ th {
     text-align: center;
     /* margin: 10px; */
     vertical-align: top; /* Ensure vertical alignmnet */
-    width: 150px; /* Set fixed width to handle long names */
+    width: 20%; /* Set fixed width to handle long names */
     word-wrap: break-word; /* Break long names */
     /* border: 1px solid black; */
 }
@@ -254,4 +280,17 @@ th {
     background-color: #4CAF50;
     border-radius: 10px;
     transition: width 0.4s ease;
+}
+
+/* ----------------Most used teammates---------------- */
+button.show-toggle {
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color;
+}
+
+button.show-toggle:hover {
+    background-color: #d1c1b0;
 }
