@@ -151,6 +151,32 @@ th {
 #topTeammates ol {
     padding: 0;
 }
+/* ----------------Pages---------------- */
+#paginationControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+
+#paginationControls button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#paginationControls input {
+    width: 50px;
+    text-align: center;
+    margin: 0 5px;
+    padding: 5px;
+}
+
+#paginationControls div {
+    display: inline-flex;
+    align-items: center;
+}
+
 
 /* ----------------Custom dropdown---------------- */
 .custom-dropdown {
