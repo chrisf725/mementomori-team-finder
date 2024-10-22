@@ -491,6 +491,192 @@ document.getElementById('searchInput').addEventListener('input', (event) => {
     filterResults(query);
 })
 
+// Find usage rates of all characters in BL and LL across all regions
+const fetchAllData = async () => {
+    const worldsData = await fetchWorldsData();
+    if (!worldsData) {
+        alert('Error fetching worlds data');
+        return;
+    }
+
+    const worldsCount = processWorldsData(worldsData);
+    const urls = generateUrls(worldsCount);
+
+    const responses = await Promise.all(urls.map(async (url) => {
+        try {
+            const response = await fetch(url);
+            if (response.status === 404)  {
+                console.warn(`Data not available for ${url}`);
+                return null;
+            }
+            return response;
+        } catch (error) {
+            console.error(`Error fetching data for ${url}`, error);
+            return null;
+        }
+    }))
+
+    const data = await Promise.all(responses.map(response => {
+        if (response && response.ok) {
+            return response.json();
+        }
+        return null;
+    }))
+    // console.log(data);
+    return data.filter(item => item !== null);
+}
+
+const calculateUsageRates = (data) => {
+    const characterCounts = {};
+    let totalTeams = 0;
+    const playerTeamsMap = new Map();
+
+    // Raw data; includes duplicates
+    // data.forEach(apiData => {
+    //     apiData.data.forEach(player => {
+    //         totalTeams++;
+    //         player.UserCharacterInfoList.forEach(characterInfo => {
+    //             const characterId = characterInfo.CharacterId;
+    //             if (!characterCounts[characterId]) {
+    //                 characterCounts[characterId] = 0;
+    //             }
+    //             characterCounts[characterId]++;
+    //         })
+    //     })
+    // })
+    
+
+    data.forEach(apiData => {
+        apiData.data.forEach(player => {
+            // const playerId = player.PlayerId;
+            let playerId = null
+                for (let i = 0; i < 5 && !playerId; i++) {
+                    for (let j = 0; j < 6 && !playerId; j++) {
+                        playerId = player.UserCharacterInfoList[i]?.UserEquipmentDtoInfos[j]?.PlayerId;
+                    }
+                }
+            const teamCharacters = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId).sort().join('-');
+
+            if (!playerTeamsMap.has(playerId)) {
+                playerTeamsMap.set(playerId, new Set());
+            }
+
+            const playerTeams = playerTeamsMap.get(playerId);
+
+            if (!playerTeams.has(teamCharacters)) {
+                playerTeams.add(teamCharacters);
+                totalTeams++;
+                player.UserCharacterInfoList.forEach(characterInfo => {
+                    const characterId = characterInfo.CharacterId;
+                    if (!characterCounts[characterId]) {
+                        characterCounts[characterId] = 0;
+                    }
+                    characterCounts[characterId]++;
+                })
+            }
+        })
+    })
+
+    const usageRates = {};
+    Object.entries(characterCounts).forEach(([characterId, count]) => {
+        usageRates[characterId] = count / totalTeams * 100;
+    })
+    // console.log(characterCounts);
+    // console.log(totalTeams + ' Total Teams with no duplicates');
+    // console.log(usageRates);
+
+    return {usageRates, characterCounts, totalTeams};
+}
+
+const displayUsageRates = ({usageRates, characterCounts, totalTeams}) => {
+    const sortedUsageRates = Object.entries(usageRates).sort((a, b) => b[1] - a[1]);
+
+    const container = document.getElementById('usageRatesContainer');
+
+    const list = document.createElement('ol');
+
+    container.innerHTML = `
+    <div class="tooltip">
+        <h3><u>All Characters Usage Rate</u>*</h3>
+        <span class="tooltiptext">The usage rate displays the percentage of all characters' usage in the selected game mode(s) and region(s). Duplicate teams by the same player will not be counted in the usage rate.<br><br>Total teams: ${totalTeams}</span>
+    `;
+    
+    const initialLimit = 10;
+    let currentLimit = initialLimit;
+
+    const renderCharacterUsageList = (limit) => {
+        list.innerHTML = ''; // Clear the list
+        sortedUsageRates.slice(0, limit).forEach(([characterId, usageRate], index) => {
+            const listItem = document.createElement('li');
+            const characterName = characterNames[characterId]?.name || 'Unknown Character';
+            const count = characterCounts[characterId];
+            const characterImageUrl = generateImageURL(characterId);
+            // console.log(`${characterName}: ${usageRate.toFixed(2)}%`);
+            
+            // listItem.textContent = `${characterName}: ${usageRate.toFixed(2)}%`;
+            const img = document.createElement('img');
+            img.src = characterImageUrl;
+            img.alt = characterName;
+            img.style.width = '50px';
+            img.style.height = '50px';
+            img.style.marginRight = '10px';
+
+            const textContainer = document.createElement('div');
+            textContainer.style.display = 'flex';
+            textContainer.style.flexDirection = 'column';
+            textContainer.style.alignItems = 'flex-start';
+
+            const nameText = document.createElement('span');
+            nameText.textContent = `${index + 1}) ${characterName}: ${count} (${usageRate.toFixed(2)}%)`;
+            textContainer.appendChild(nameText);
+
+            const barContainer = document.createElement('div');
+            barContainer.style.display = 'inline-block';
+            barContainer.style.width = '200px';
+            barContainer.style.height = '15px';
+            barContainer.style.backgroundColor = '#ccc';
+
+            const bar = document.createElement('div');
+            bar.style.width = `${usageRate.toFixed(2)}%`;
+            bar.style.height = '100%';
+            bar.style.backgroundColor = '#76c7c0';
+
+            barContainer.appendChild(bar);
+            textContainer.appendChild(barContainer);
+
+            listItem.prepend(img);
+            listItem.appendChild(textContainer);
+            list.appendChild(listItem);
+        })
+    }
+    renderCharacterUsageList(currentLimit);
+
+    const showAllButton = document.createElement('button');
+    showAllButton.textContent = 'Show All';
+    showAllButton.className = 'show-toggle';
+    showAllButton.addEventListener('click', () => {
+        currentLimit = sortedUsageRates.length;
+        renderCharacterUsageList(currentLimit);
+        showAllButton.style.display = 'none';
+        showLessButton.style.display = 'inline';
+    })
+
+    const showLessButton = document.createElement('button');
+    showLessButton.textContent = 'Show Less';
+    showLessButton.style.display = 'none';
+    showLessButton.className = 'show-toggle';
+    showLessButton.addEventListener('click', () => {
+        currentLimit = initialLimit;
+        renderCharacterUsageList(currentLimit);
+        showAllButton.style.display = 'inline';
+        showLessButton.style.display = 'none';
+    })
+
+    container.appendChild(list);
+    container.appendChild(showAllButton);
+    container.appendChild(showLessButton);
+}
+
 document.getElementById('getTeam').addEventListener('click', async () => {
     // fetchWorldsData();
     currentPage = 1;
@@ -634,6 +820,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         const uniquePlayers = new Set();
         playerData = [];
         const teammateCounts = {};
+        const playerTeams = {}; // Mapping of player ID to their teams
 
         filteredData.forEach((apiData, index) => {
             const url = urls[index];
@@ -659,29 +846,41 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                         playerId = player.UserCharacterInfoList[i]?.UserEquipmentDtoInfos[j]?.PlayerId;
                     }
                 }
-                if (playerId && !uniquePlayers.has(playerId)) {
-                    uniquePlayers.add(playerId);
+                if (playerId) {
+                    const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId).sort();
+                    const teamKey = characterIds.join(',');
 
-                    const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId);
-                    if (selectedCharacterIds.every(id => characterIds.includes(id))) {
-                        const highestLevel = Math.max(...player.UserCharacterInfoList.map(info => info.Level));
-                        playerData.push({
-                            playerName: player.PlayerName,
-                            playerId,
-                            region,
-                            highestLevel,
-                            characters: player.UserCharacterInfoList
-                        })
+                    if (!playerTeams[playerId]) {
+                        playerTeams[playerId] = new Set();
+                    }
 
-                        // Count teammates
-                        player.UserCharacterInfoList.forEach(info => {
-                            if (info.CharacterId !== selectedCharacterId) {
-                                if (!teammateCounts[info.CharacterId]) {
-                                    teammateCounts[info.CharacterId] = 0;
-                                }
-                                teammateCounts[info.CharacterId]++;
-                            }
-                        })
+                    if (!playerTeams[playerId].has(teamKey)) {
+                        playerTeams[playerId].add(teamKey);
+
+                        // if (!uniquePlayers.has(playerId)) {
+                        //     uniquePlayers.add(playerId);
+
+                            if (selectedCharacterIds.every(id => characterIds.includes(id))) {
+                                const highestLevel = Math.max(...player.UserCharacterInfoList.map(info => info.Level));
+                                playerData.push({
+                                    playerName: player.PlayerName,
+                                    playerId,
+                                    region,
+                                    highestLevel,
+                                    characters: player.UserCharacterInfoList
+                                })
+
+                                // Count teammates
+                                player.UserCharacterInfoList.forEach(info => {
+                                    if (info.CharacterId !== selectedCharacterId) {
+                                        if (!teammateCounts[info.CharacterId]) {
+                                            teammateCounts[info.CharacterId] = 0;
+                                        }
+                                        teammateCounts[info.CharacterId]++;
+                                    }
+                                })
+                            // }
+                        }
                     }
                 }
             });
@@ -708,7 +907,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                 }
             })
         })
-        console.log(selectedCharacterCount);
+        // console.log(selectedCharacterCount + ' ' + characterNames[selectedCharacterId].name);
 
         const selectedCharacterCountContainer = document.getElementById('selectedCharacterCountContainer');
         const cname = characterNames[selectedCharacterId].name;
@@ -731,7 +930,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         const topTeammatesContainer = document.getElementById('topTeammates');
         topTeammatesContainer.innerHTML = `<h3>Most Used Teammates for ${characterNames[selectedCharacterId].name}</h3>`;
         const topTeammatesList = document.createElement('ol');
-        const maxCount = sortedTeammates[0][1]; // Get the count of the most used teammate
+        // const maxCount = sortedTeammates[0][1]; // Get the count of the most used teammate
 
         const renderTeammatesList = (teammates, limit) => {
             topTeammatesList.innerHTML = ''; // Clear the list
@@ -808,4 +1007,9 @@ document.getElementById('getTeam').addEventListener('click', async () => {
     } catch (error) {
         console.error('Error fetching team:', error);
     }
+
+    // Fetch all data to calculate usage rates
+    const allData = await fetchAllData();
+    const usageRates = calculateUsageRates(allData);
+    displayUsageRates(usageRates);
 })

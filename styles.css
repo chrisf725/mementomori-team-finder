@@ -165,10 +165,6 @@ th {
     margin: 0 auto;
 }
 
-#topTeammates {
-    width: 100%;
-}
-
 #topTeammates li {
     display: flex;
     align-items: center;
@@ -176,6 +172,51 @@ th {
 
 #topTeammates ol {
     padding: 0;
+}
+
+#usageRatesContainer li {
+    display: flex;
+    align-items: center;
+    width: 266px;
+}
+
+#usageRatesContainer ol {
+    padding: 0;
+}
+
+#stats-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin-bottom: -16px;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the text */
+    left: 50%;
+    margin-left: -100px; /* Center the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
 }
 /* ----------------Pages---------------- */
 #paginationControls {
