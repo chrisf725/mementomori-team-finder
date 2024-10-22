@@ -14,16 +14,26 @@
     <div class="info-box" id="infoBox">
         <button class="close-btn" id="closeInfoBox">X</button>
         <p>This tool is designed to help you find teams for selected characters that have been used by top players in the game MementoMori. 
-        Only top 20 in Battle League and top 50 in Legend League is accounted for. It does not reflect the majority of players.</p>
+            Only top 20 in Battle League and top 50 in Legend League is accounted for. It does not reflect the majority of players.</p>
         <p>This was made using the API provided by <a href="https://mentemori.icu/">this site</a>.</p>
+        <h2>How the data is being calculated</h2>
+        <p>If a player is in both Battle League and Legend League, and if the teams for both modes are the same, only one of the teams will 
+            be shown irregardless of team position. If a player
+            has unique teams for Battle League and Legend League, both teams will be shown.
+        </p>
+        <p>The character usage rate displays the percentage of all characters' usage in the selected game mode(s) and region(s).
+            Duplicate teams by the same player will not be counted in the usage rate, and only one team will be counted.
+            If a character is not shown on the usage rate, they have a usage rate of 0%.
+        </p>
         <h2>How to use</h2>
         <p>- Select the character you would like to see the teams for</p>
         <p>- Choose one or more leagues (not selecting anything defaults to having selecting all)</p>
         <p>- Choose one or more servers (not selecting anything defaults to having selecting all)</p>
         <p>- Click the "Find Teams" button to get the results</p>
         <p>- Search for a specific teammate with the chosen character to see teams containing those two characters</p>
-        <h2>Update 10/19</h2>
-        <p>- Added Meria</p>
+        <h2>Update 10/22</h2>
+        <p>- Added character usage rate</p>
+        <p>- Updated data calculation</p>
     </div>
     <br>
     <main>
@@ -98,7 +108,10 @@
         
         <div id="resultsTable"></div>
         <div id="paginationControls"></div>
-        <div id="topTeammates"></div>
+        <div id="stats-container">
+            <div id="topTeammates"></div>
+            <div id="usageRatesContainer"></div>
+        </div>
     </div>
     </main>
 
