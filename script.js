@@ -677,6 +677,61 @@ const displayUsageRates = ({usageRates, characterCounts, totalTeams}) => {
     container.appendChild(showLessButton);
 }
 
+function renderRarityBarGraph (rarityCounts) {
+    const selectedCharacterIds = [parseInt(dropdownButton.dataset.value)];
+    const characterName = characterNames[selectedCharacterIds[0]]?.name || 'Unknown Character';
+    const rarityOrder = ['N', 'R', 'R+', 'SR', 'SR+', 'SSR', 'SSR+', 'UR', 'UR+', 'LR', 'LR+', 'LR+2', 'LR+3', 'LR+4', 'LR+5', 'LR+6', 'LR+7', 'LR+8', 'LR+9', 'LR+10'];
+
+    // Find max count to scale the bars
+    const maxCount = Math.max(...Object.values(rarityCounts), 1);
+    // console.log(maxCount);
+
+    // Get the container element
+    const container = document.getElementById('rarityBarGraphContainer');
+    container.innerHTML = '';
+
+    // Create a title element
+    const title = document.createElement('h3');
+    title.textContent = `${characterName} Rarity Distribution`;
+    container.appendChild(title);
+
+    // Create the graph container
+    const graph = document.createElement('div');
+    graph.className = 'rarity-bar-graph';
+
+    rarityOrder.forEach(rarityName => {
+        const count = rarityCounts[rarityName] || 0;
+
+        // Create the bar item
+        const barItem = document.createElement('div');
+        barItem.className = 'bar-item';
+
+        // Create label for rarity name
+        const rarityLabel = document.createElement('div');
+        rarityLabel.className = 'rarity-label';
+        rarityLabel.textContent = rarityName;
+
+        // Create the bar
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        const barHeight = (count / maxCount) * 100;
+        bar.style.height = `${barHeight}%`;
+
+        // Create the count label
+        const countLabel = document.createElement('div');
+        countLabel.className = 'count-label';
+        countLabel.textContent = count;
+
+        
+        barItem.appendChild(countLabel);
+        barItem.appendChild(bar);
+        barItem.appendChild(rarityLabel);
+
+        graph.appendChild(barItem);
+    })
+    container.appendChild(graph);
+}
+
 document.getElementById('getTeam').addEventListener('click', async () => {
     // fetchWorldsData();
     currentPage = 1;
@@ -821,6 +876,8 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         playerData = [];
         const teammateCounts = {};
         const playerTeams = {}; // Mapping of player ID to their teams
+        const rarityCounts = {};
+        // const rarityOrder = ['N', 'R', 'R+', 'SR', 'SR+', 'SSR', 'SSR+', 'UR', 'UR+', 'LR', 'LR+', 'LR+2', 'LR+3', 'LR+4', 'LR+5', 'LR+6', 'LR+7', 'LR+8', 'LR+9', 'LR+10'];
 
         filteredData.forEach((apiData, index) => {
             const url = urls[index];
@@ -879,12 +936,33 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                                         teammateCounts[info.CharacterId]++;
                                     }
                                 })
+
+                                // Collect rarities
+                                player.UserCharacterInfoList.forEach(characterInfo => {
+                                    if (selectedCharacterIds.includes(characterInfo.CharacterId)) {
+                                        const characterRarity = rarity[characterInfo.RarityFlags] || 'Unknown Rarity';
+                                        if (!rarityCounts[characterRarity]) {
+                                            rarityCounts[characterRarity] = 0;
+                                        }
+                                        rarityCounts[characterRarity]++;
+                                    }
+                                })
                             // }
                         }
                     }
                 }
             });
         });
+
+        // Rarity debug
+        // console.log(`Rarity counts for ${characterNames[selectedCharacterId].name}:`);
+        // rarityOrder.forEach(rarityName => {
+        //     if (rarityCounts[rarityName]) {
+        //         console.log(`${rarityName}: ${rarityCounts[rarityName]}`);
+        //     }
+        // })
+
+        renderRarityBarGraph(rarityCounts);
         // Debug
         // console.log(player.PlayerName);
         // console.log(playerId);
