@@ -104,6 +104,15 @@ const characterNames = {
     94: {name: '', imageURL: generateImageURL(94)},
     95: {name: 'Nina (Azure)', imageURL: generateImageURL(95), soulColor: 'Azure'},
     96: {name: 'Amleth (Amber)', imageURL: generateImageURL(96), soulColor: 'Amber'},
+    97: {name: '', imageURL: generateImageURL(97)},
+    98: {name: '', imageURL: generateImageURL(98)},
+    99: {name: '', imageURL: generateImageURL(99)},
+    100: {name: '', imageURL: generateImageURL(100)},
+    101: {name: '', imageURL: generateImageURL(101)},
+    102: {name: '', imageURL: generateImageURL(102)},
+    103: {name: '', imageURL: generateImageURL(103)},
+    104: {name: '', imageURL: generateImageURL(104)},
+    105: {name: 'Natasha (Chaos)', imageURL: generateImageURL(105), soulColor: 'Chaos'},
 }
 
 const rarity = {
