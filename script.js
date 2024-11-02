@@ -389,6 +389,11 @@ const renderTable = (data, page) => {
             const characterDiv = document.createElement('div');
             characterDiv.className = 'character-container'
 
+            const tooltipDiv = document.createElement('div');
+            tooltipDiv.className = 'tooltip-character';
+            tooltipDiv.textContent = `Show stats for ${characterName}`;
+            characterDiv.appendChild(tooltipDiv);
+
             const rarityDiv = document.createElement('div');
             rarityDiv.textContent = characterRarity;
             characterDiv.appendChild(rarityDiv);
@@ -405,6 +410,131 @@ const renderTable = (data, page) => {
             img.src = characterNames[info.CharacterId]?.imageURL;
             img.alt = characterName;
             characterDiv.appendChild(img);
+
+            // Add event listener to characterDiv
+            const statsModal = document.getElementById('statsModal');
+            const modalClose = document.getElementById('modalClose');
+            const modalCharacterName = document.getElementById('modalCharacterName');
+            const modalCharacterStats = document.getElementById('modalCharacterStats');
+            characterDiv.addEventListener('click', () => {
+                // Character click details
+                // console.log(`CharacterId: ${info.CharacterId}, Name: ${characterName}, Rarity: ${characterRarity}`);
+                // console.log('Equipment: ', info.UserEquipmentDtoInfos);
+                // console.log(info.Base);
+                // console.log(info.Battle);
+                // console.log(info.Battle?.Speed);
+
+                // modalCharacterName.textContent = `${characterRarity} ${characterName}`;
+                modalCharacterName.innerHTML = `
+                <div class="modal-header">
+                    <img src="${characterNames[info.CharacterId]?.imageURL}" alt="${characterName}" class="modal-character-image">
+                    <div class="character-info">
+                        <h3>${characterRarity} ${characterName} Lv. ${info.Level}</h3>
+                    </div>
+                </div>
+                `;
+                const statsContent = `
+                <table class="stats-table">
+                    <tr>
+                        <td class="stat-label">Player: ${player.playerName}</td>
+                    </tr>
+                    <tr style="height: 25px;"></tr>
+                    <tr>
+                        <td class="stat-label">STR</td>
+                        <td class="stat-value">${info.Base?.Muscle?.toLocaleString()}</td>
+                        <td class="stat-label">DEX</td>
+                        <td class="stat-value">${info.Base?.Energy?.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">MAG</td>
+                        <td class="stat-value">${info.Base?.Intelligence?.toLocaleString()}</td>
+                        <td class="stat-label">STA</td>
+                        <td class="stat-value">${info.Base?.Health?.toLocaleString()}</td>
+                    </tr>
+                    <tr style="height: 25px;"></tr>
+                    <tr>
+                        <td class="stat-label">HP</td>
+                        <td class="stat-value">${info.Battle?.HP.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">ATK</td>
+                        <td class="stat-value">${info.Battle?.AttackPower.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">DEF</td>
+                        <td class="stat-value">${info.Battle?.Defense.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">DEF Break</td>
+                        <td class="stat-value">${info.Battle?.DefensePenetration.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">SPD</td>
+                        <td class="stat-value">${info.Battle?.Speed.toLocaleString()}</td>
+                    </tr>
+                    <tr style="height: 25px;"></tr>
+                    <tr>
+                        <td class="stat-label">PM. DEF Break</td>
+                        <td class="stat-value">${info.Battle?.DamageEnhance.toLocaleString()}</td>
+                        <td class="stat-label">P. DEF</td>
+                        <td class="stat-value">${info.Battle?.PhysicalDamageRelax.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td></td><td></td>
+                        <td class="stat-label">M. DEF</td>
+                        <td class="stat-value">${info.Battle?.MagicDamageRelax.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">ACC</td>
+                        <td class="stat-value">${info.Battle?.Hit.toLocaleString()}</td>
+                        <td class="stat-label">EVD</td>
+                        <td class="stat-value">${info.Battle?.Avoidance.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">CRIT</td>
+                        <td class="stat-value">${info.Battle?.Critical.toLocaleString()}</td>
+                        <td class="stat-label">CRIT RES</td>
+                        <td class="stat-value">${info.Battle?.CriticalResist.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">CRIT DMG Boost</td>
+                        <td class="stat-value">${((info.Battle?.CriticalDamageEnhance ?? 0) / 100).toFixed(1)}%</td>
+                        <td class="stat-label">P. CRIT DMG Cut</td>
+                        <td class="stat-value">${((info.Battle?.PhysicalCriticalDamageRelax ?? 0) / 100).toFixed(1)}%</td>
+                    </tr>
+                    <tr>
+                        <td></td><td></td>
+                        <td class="stat-label">M. CRIT DMG Cut</td>
+                        <td class="stat-value">${((info.Battle?.MagicCriticalDamageRelax ?? 0) / 100).toFixed(1)}%</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">Debuff ACC</td>
+                        <td class="stat-value">${info.Battle?.DebuffHit.toLocaleString()}</td>
+                        <td class="stat-label">Debuff RES</td>
+                        <td class="stat-value">${info.Battle?.DebuffResist.toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">Counter</td>
+                        <td class="stat-value">${((info.Battle?.DamageReflect ?? 0) / 100).toFixed(1)}%</td>
+                        <td class="stat-label">HP Drain</td>
+                        <td class="stat-value">${((info.Battle?.HpDrain ?? 0) / 100).toFixed(1)}%</td>
+                    </tr>
+                    
+                </table>
+                `;
+                modalCharacterStats.innerHTML = statsContent;
+                statsModal.style.display = 'block';
+            })
+
+            modalClose.addEventListener('click', () => {
+                statsModal.style.display = 'none';
+            })
+
+            window.onclick = event => {
+                if (event.target === statsModal) {
+                    statsModal.style.display = 'none';
+                }
+            }
 
             teamTd.appendChild(characterDiv);
         });
@@ -910,8 +1040,14 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                 for (let i = 0; i < 5 && !playerId; i++) {
                     for (let j = 0; j < 6 && !playerId; j++) {
                         playerId = player.UserCharacterInfoList[i]?.UserEquipmentDtoInfos[j]?.PlayerId;
+                        // console.log(`${player.PlayerName}: ${playerId}`);
+                        // console.log(`${player.UserCharacterInfoList[i]?.UserEquipmentDtoInfos[j]?.ReinforcementLv}, 
+                        //     ${player.UserCharacterInfoList[i]?.UserEquipmentDtoInfos[j]?.AdditionalParameterMuscle}`);
+                        
                     }
+                    
                 }
+                
                 if (playerId) {
                     const characterIds = player.UserCharacterInfoList.map(characterInfo => characterInfo.CharacterId).sort();
                     const teamKey = characterIds.join(',');
@@ -933,7 +1069,13 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                                     playerId,
                                     region,
                                     highestLevel,
-                                    characters: player.UserCharacterInfoList
+                                    characters: player.UserCharacterInfoList.map(characterInfo => ({
+                                        ...characterInfo,
+                                        UserEquipmentDtoInfos: characterInfo.UserEquipmentDtoInfos,
+                                        Base: characterInfo.BaseParameter,
+                                        Battle: characterInfo.BattleParameter,
+                                    }))
+
                                 })
 
                                 // Count teammates
@@ -976,6 +1118,16 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         // console.log(player.PlayerName);
         // console.log(playerId);
         playerData.sort((a, b) => b.highestLevel - a.highestLevel);
+
+        // Character results debug
+        // for (let i = 0; i < playerData.length; i++) {
+        //     console.log(playerData[i].playerName);
+        //     for (let j = 0; j < playerData[i].characters.length; j++) {
+        //         console.log(playerData[i].characters[j]?.CharacterId);
+        //         // console.log(playerData[i].characters[j]?.UserEquipmentDtoInfos);
+        //         console.log(playerData[i].characters[j]);
+        //     }
+        // }
 
         // Initially render the full data
         filteredResults = playerData;
