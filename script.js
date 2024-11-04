@@ -1160,10 +1160,10 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         .slice(0, 100);
 
         // console.log(`Top 10 Most Used Teammates for ${characterNames[selectedCharacterId].name}:`);
-        sortedTeammates.forEach(([characterId, count], index) => {
-            const characterName = characterNames[characterId]?.name || 'Unknown Character';
-            // console.log(`${index + 1}. ${characterName}: ${count}`);
-        })
+        // sortedTeammates.forEach(([characterId, count], index) => {
+        //     const characterName = characterNames[characterId]?.name || 'Unknown Character';
+        //     // console.log(`${index + 1}. ${characterName}: ${count}`);
+        // })
 
         // Display most used teammates in descending order
         const topTeammatesContainer = document.getElementById('topTeammates');
