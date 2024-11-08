@@ -332,7 +332,7 @@ const generateUrls = (worldsCount) => {
         }
     
         if (JP) {
-            for (let i = 37; i <= 66; i++) {
+            for (let i = 37; i <= 67; i++) {
                 urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
             }
         }
