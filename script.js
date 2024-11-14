@@ -9,11 +9,11 @@ const generateImageURL = (id) => {
 
 const generateEquipmentIconUrl = (id) => {
     const paddedId = String(id).padStart(6, '0');
-    return `https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Assets/Equipment/EQP_${paddedId}.png`;
+    return `https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Assets/Equipment/EQP_${paddedId}.png`;
 }
 
 // Grab the text data for English equipment names
-const textDataPromise = fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/TextResourceEnUsMB.json')
+const textDataPromise = fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Master/TextResourceEnUsMB.json')
     .then(response => response.json())
     .then(textData => {
         // Create a map from StringKey to Text
@@ -29,7 +29,7 @@ const textDataPromise = fetch('https://raw.githubusercontent.com/ScobraCK/Mement
 // Grab the equipment data
 let combinedEquipmentData = [];
 Promise.all([
-    fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentMB.json')
+    fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Master/EquipmentMB.json')
         .then(response => response.json()),
     textDataPromise
 ])
@@ -67,7 +67,7 @@ Promise.all([
 // Grab the rune data
 let combinedRuneData = [];
 Promise.all([
-    fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/SphereMB.json')
+    fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Master/SphereMB.json')
         .then(response => response.json()),
     textDataPromise
 ])
@@ -88,7 +88,7 @@ Promise.all([
 
 // Grab the reinforcement upgrade data
 let reinforcementData = [];
-fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentReinforcementParameterMB.json')
+fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Master/EquipmentReinforcementParameterMB.json')
     .then(response => response.json())
     .then(data => {
         reinforcementData = data.map(item => ({
@@ -101,7 +101,7 @@ fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/ma
 
 // Grab dark upgrade data
 let darkData = [];
-fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentMatchlessSacredTreasureMB.json')
+fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Master/EquipmentMatchlessSacredTreasureMB.json')
     .then(response => response.json())
     .then(data => {
         darkData = data.map(item => ({
@@ -118,7 +118,7 @@ fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/ma
 
 // Grab holy upgrade data
 let holyData = [];
-fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentLegendSacredTreasureMB.json')
+fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Master/EquipmentLegendSacredTreasureMB.json')
     .then(response => response.json())
     .then(data => {
         holyData = data.map(item => ({
