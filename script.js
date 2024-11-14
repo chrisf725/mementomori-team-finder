@@ -7,6 +7,133 @@ const generateImageURL = (id) => {
     return `https://raw.githubusercontent.com/ScobraCK/MementoMori-data/main/Assets/Characters/Sprites/CHR_${paddedId}_00_s.png`;
 }
 
+const generateEquipmentIconUrl = (id) => {
+    const paddedId = String(id).padStart(6, '0');
+    return `https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Assets/Equipment/EQP_${paddedId}.png`;
+}
+
+// Grab the text data for English equipment names
+const textDataPromise = fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/TextResourceEnUsMB.json')
+    .then(response => response.json())
+    .then(textData => {
+        // Create a map from StringKey to Text
+        const textMap = {};
+        textData.forEach(item => {
+            textMap[item.StringKey] = item.Text;
+        });
+        // console.log(textMap);
+        return textMap;
+    })
+.catch(error => console.error('Error fetching JSON data:', error));
+
+// Grab the equipment data
+let combinedEquipmentData = [];
+Promise.all([
+    fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentMB.json')
+        .then(response => response.json()),
+    textDataPromise
+])
+.then(([equipmentData, textMap]) => {
+    function parseMemo(memo) {
+        // Get part before '_'
+        const beforeUnderscore = memo.split('_')[0];
+        // Use regex to extract letters and numbers
+        const match = beforeUnderscore.match(/([A-Za-z]+)(\d+)/);
+        if (match) {
+            const letters = match[1];
+            const numbers = match[2];
+            return `${letters} Lv. ${numbers}`;
+        } else {
+            return beforeUnderscore;
+        }
+    }
+
+    combinedEquipmentData = equipmentData.map(item => {
+        const memoInfo = parseMemo(item.Memo);
+        return {
+            Id: item.Id,
+            Memo: item.Memo,
+            NameKey: item.NameKey,
+            IconId: item.IconId,
+            SlotType: item.SlotType,
+            Text: `${textMap[item.NameKey] || 'Unknown Name'} ${memoInfo}`,
+            BaseEffect: item.BattleParameterChangeInfo?.Value
+        };
+    });
+    // console.log(combinedEquipmentData);
+})
+.catch(error => console.error('Error fetching JSON data:', error));
+
+// Grab the rune data
+let combinedRuneData = [];
+Promise.all([
+    fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/SphereMB.json')
+        .then(response => response.json()),
+    textDataPromise
+])
+.then(([sphereData, textMap]) => {
+    // Combine data
+    combinedRuneData = sphereData.map(item => {
+        return {
+            Id: item.Id,
+            NameKey: item.NameKey,
+            Lv: item.Lv,
+            RarityFlags: item.RarityFlags,
+            Text: textMap[item.NameKey] || ''
+        };
+    });
+    // console.log(combinedRuneData);
+})
+.catch(error => console.error('Error fetching JSON data:', error));
+
+// Grab the reinforcement upgrade data
+let reinforcementData = [];
+fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentReinforcementParameterMB.json')
+    .then(response => response.json())
+    .then(data => {
+        reinforcementData = data.map(item => ({
+            Id: item.Id,
+            ReinforcementCoefficient: item.ReinforcementCoefficient
+        }))
+        // console.log(reinforcementData);
+    })
+.catch(error => console.error('Error fetching JSON data:', error));
+
+// Grab dark upgrade data
+let darkData = [];
+fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentMatchlessSacredTreasureMB.json')
+    .then(response => response.json())
+    .then(data => {
+        darkData = data.map(item => ({
+            Id: item.Id,
+            ArmorDefensePenetration: item.ArmorDefensePenetration,
+            GauntletMagicDamageRelax: item.GauntletMagicDamageRelax,
+            HelmetCritical: item.HelmetCritical,
+            ShoesHp: item.ShoesHp,
+            SubPhysicalDamageRelax: item.SubPhysicalDamageRelax,
+            WeaponAttackPower: item.WeaponAttackPower
+        }))
+    })
+.catch(error => console.error('Error fetching JSON data:', error));
+
+// Grab holy upgrade data
+let holyData = [];
+fetch('https://raw.githubusercontent.com/ScobraCK/MementoMori-data/refs/heads/main/Master/EquipmentLegendSacredTreasureMB.json')
+    .then(response => response.json())
+    .then(data => {
+        holyData = data.map(item => ({
+            Id: item.Id,
+            ArmorMagicCriticalDamageRelaxPercent: item.ArmorMagicCriticalDamageRelaxPercent,
+            GauntletCriticalDamagePercent: item.GauntletCriticalDamagePercent,
+            HelmetPhysicalCriticalDamageRelaxPercent: item.HelmetPhysicalCriticalDamageRelaxPercent,
+            ShoesHpDrainPercent: item.ShoesHpDrainPercent,
+            SubHitPercent: item.SubHitPercent,
+            WeaponAttackPowerPercent: item.WeaponAttackPowerPercent
+        }))
+    })
+.catch(error => console.error('Error fetching JSON data:', error));
+
+
 const characterNames = {
     1: {name: 'Monica', imageURL: generateImageURL(1), soulColor: 'Azure'},
     2: {name: 'Illya', imageURL: generateImageURL(2), soulColor: 'Azure'},
@@ -416,6 +543,7 @@ const renderTable = (data, page) => {
             const modalClose = document.getElementById('modalClose');
             const modalCharacterName = document.getElementById('modalCharacterName');
             const modalCharacterStats = document.getElementById('modalCharacterStats');
+            const modalCharacterEquipment = document.getElementById('modalCharacterEquipment')
             characterDiv.addEventListener('click', () => {
                 // Character click details
                 // console.log(`CharacterId: ${info.CharacterId}, Name: ${characterName}, Rarity: ${characterRarity}`);
@@ -521,8 +649,325 @@ const renderTable = (data, page) => {
                     </tr>
                     
                 </table>
+                <br><br><br>
                 `;
+
+                // console.log('Equipment: ', info.UserEquipmentDtoInfos);
+                const equipmentDetails = [];
+                info.UserEquipmentDtoInfos.forEach(equipItem => {
+                    const equipmentId = equipItem.EquipmentId;
+                    const sphereIds = [
+                        equipItem.SphereId1,
+                        equipItem.SphereId2,
+                        equipItem.SphereId3,
+                        equipItem.SphereId4,
+                    ];
+                
+                    // Find the matching equipment in combinedEquipmentData
+                    const matchedEquipment = combinedEquipmentData.find(item => item.Id === equipmentId);
+                
+                    if (matchedEquipment) {
+                        const reinforcement = reinforcementData.find(item => item.Id === equipItem.ReinforcementLv);
+                        const dark = darkData.find(item => item.Id === (equipItem.MatchlessSacredTreasureLv + 1));
+                        const holy = holyData.find(item => item.Id === (equipItem.LegendSacredTreasureLv + 1));
+                        // console.log('Equipment Details:');
+                        // console.log(`Id: ${matchedEquipment.Id}`);
+                        // console.log(`Memo: ${matchedEquipment.Memo}`);
+                        // console.log(`NameKey: ${matchedEquipment.NameKey}`);
+                        let baseEffect = matchedEquipment.BaseEffect;
+                        if (reinforcement) {
+                            baseEffect = Math.round(reinforcement.ReinforcementCoefficient * matchedEquipment.BaseEffect).toLocaleString();
+                            // console.log(`BaseEffect: ${Math.round(reinforcement.ReinforcementCoefficient * matchedEquipment.BaseEffect).toLocaleString()}`);
+                            // console.log(`BaseEffect: ${baseEffect}`);
+                        }
+                        let darkValue = 0;
+                        let darkEffect = '';
+                        let holyValue = 0;
+                        let holyEffect = '';
+                        let baseEffectText = '';
+                        if (matchedEquipment.SlotType === 1) {
+                            baseEffectText = 'ATK';
+                            if (dark) {
+                                darkValue = dark.WeaponAttackPower;
+                                darkEffect = 'ATK';
+                            }
+                            if (holy) {
+                                holyValue = holy.WeaponAttackPowerPercent;
+                                holyEffect = 'ATK';
+                            }
+                        } 
+                        if (matchedEquipment.SlotType === 2) {
+                            baseEffectText = 'Debuff RES';
+                            if (dark) {
+                                darkValue = dark.SubPhysicalDamageRelax;
+                                darkEffect = 'P. DEF';
+                            }
+                            if (holy) {
+                                holyValue = holy.SubHitPercent;
+                                holyEffect = 'ACC';
+                            }
+                            
+                        }
+                        if (matchedEquipment.SlotType === 3) {
+                            baseEffectText = 'DEF';
+                            if (dark) {
+                                darkValue = dark.GauntletMagicDamageRelax;
+                                darkEffect = 'M. DEF';
+                            }
+                            if (holy) {
+                                holyValue = holy.GauntletCriticalDamagePercent;
+                                holyEffect = 'CRIT DMG BOOST';
+                            }
+                        }
+                        if (matchedEquipment.SlotType === 4) {
+                            baseEffectText = 'P. DEF';
+                            if (dark) {
+                                darkValue = dark.HelmetCritical;
+                                darkEffect = 'CRIT';
+                            }
+                            if (holy) {
+                                holyValue = holy.HelmetPhysicalCriticalDamageRelaxPercent;
+                                holyEffect = 'P. CRIT DMG Cut';
+                            }
+                        }
+                        if (matchedEquipment.SlotType === 5) {
+                            baseEffectText = 'M. DEF';
+                            if (dark) {
+                                darkValue = dark.ArmorDefensePenetration;
+                                darkEffect = 'DEF Break';
+                            }
+                            if (holy) {
+                                holyValue = holy.ArmorMagicCriticalDamageRelaxPercent;
+                                holyEffect = 'M. CRIT DMG Cut';
+                            }
+                        }
+                        if (matchedEquipment.SlotType === 6) {
+                            baseEffectText = 'DEF';
+                            if (dark) {
+                                darkValue = dark.ShoesHp;
+                                darkEffect = 'HP';
+                            }
+                            if (holy) {
+                                holyValue = holy.ShoesHpDrainPercent;
+                                holyEffect = 'HP Drain';
+                            }
+                        }
+
+                        equipmentDetails.push({
+                            SlotType: matchedEquipment.SlotType,
+                            IconId: matchedEquipment.IconId,
+                            Text: matchedEquipment.Text,
+                            BaseEffect: baseEffect,
+                            BaseEffectText: baseEffectText,
+                            ReinforcementLv: equipItem.ReinforcementLv,
+                            DarkLv: equipItem.MatchlessSacredTreasureLv,
+                            DarkValue: darkValue,
+                            DarkEffect: darkEffect,
+                            HolyLv: equipItem.LegendSacredTreasureLv,
+                            HolyValue: holyValue,
+                            HolyEffect: holyEffect,
+                            STR: equipItem.AdditionalParameterMuscle,
+                            DEX: equipItem.AdditionalParameterEnergy,
+                            MAG: equipItem.AdditionalParameterIntelligence,
+                            STA: equipItem.AdditionalParameterHealth,
+                            SphereIds: sphereIds,
+                            Runes: sphereIds.map(sphereId => {
+                                if (sphereId) {
+                                    return combinedRuneData.find(rune => rune.Id === sphereId);
+                                }
+                                return null;
+                            })
+                        })
+
+                        // // Equipment details debug
+                        // console.log(`Dark: ${darkValue}`);
+                        // // console.log(`BaseEffect: ${matchedEquipment.BaseEffect.toLocaleString()}`);
+                        // console.log(`STR: ${equipItem.AdditionalParameterMuscle.toLocaleString()}`);
+                        // console.log(`DEX: ${equipItem.AdditionalParameterEnergy.toLocaleString()}`);
+                        // console.log(`MAG: ${equipItem.AdditionalParameterIntelligence.toLocaleString()}`);
+                        // console.log(`STA: ${equipItem.AdditionalParameterHealth.toLocaleString()}`);
+                        // console.log(`IconId: ${matchedEquipment.IconId}`);
+                        // console.log(`SlotType: ${matchedEquipment.SlotType}`);
+                        // console.log(`Text: ${matchedEquipment.Text}`);
+                        // console.log(`Reinforcement Lv.: ${equipItem.ReinforcementLv}`);
+                        // console.log(`Dark Lv. ${equipItem.MatchlessSacredTreasureLv}`);
+                        // console.log(`Holy Lv. ${equipItem.LegendSacredTreasureLv}`);
+                        // console.log('------------------------------------');
+
+                        // // Rune details debug
+                        // sphereIds.forEach((sphereId, index) => {
+                        //     if (sphereId) {
+                        //         const matchedRune = combinedRuneData.find(rune => rune.Id === sphereId);
+                        //         if (matchedRune) {
+                        //             console.log(`${matchedRune.Text} Lv. ${matchedRune.Lv}`);
+                        //         } else {
+                        //             console.log(`Rune ${index + 1}: Empty`);
+                        //         }
+                        //     } else {
+                        //         console.log(`Rune Slot ${index + 1}: Empty`);
+                        //     }
+                        // })
+                        // console.log('------------------------------------');
+                    } else {
+                        console.log(`No equipment found for EquipmentId: ${equipmentId}`);
+                    }
+                });
+                equipmentDetails.sort((a, b) => a.SlotType - b.SlotType);
+
+                const equipmentMap = {};
+                equipmentDetails.forEach(equip => {
+                    equipmentMap[equip.SlotType] = equip;
+                });
+
+                const equipmentRows = [
+                    [equipmentMap[1], equipmentMap[4]],
+                    [equipmentMap[2], equipmentMap[5]],
+                    [equipmentMap[3], equipmentMap[6]],
+                ];
+
+                let equipmentTableHtml = `
+                <table class="equipment-table">
+                    <tbody>
+                `;
+
+                equipmentRows.forEach(row => {
+                    equipmentTableHtml += `<tr>`;
+                    row.forEach(equip => {
+                        if (equip) {
+                            equipmentTableHtml += `
+                            <td class="equipment-cell">
+                                <table>
+                                    <tr>
+                                        <td colspan="4" class="equipment-header">
+                                            <img src="${generateEquipmentIconUrl(equip.IconId)}" alt="${equip.Text}" class="equipment-icon">
+                                            <span class="equipment-name">${equip.Text} +${equip.ReinforcementLv}</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="top">
+                                        <td class="equipment-parameter">
+                                            ${equip.BaseEffectText}
+                                        </td>
+                                        <td class="equipment-parameter-value">
+                                            ${equip.BaseEffect.toLocaleString()}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="equipment-parameter">STR</td>
+                                        <td class="equipment-parameter-value">${equip.STR.toLocaleString()}</td>
+                                        <td class="equipment-parameter">DEX</td>
+                                        <td class="equipment-parameter-value">${equip.DEX.toLocaleString()}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="equipment-parameter">MAG</td>
+                                        <td class="equipment-parameter-value">${equip.MAG.toLocaleString()}</td>
+                                        <td class="equipment-parameter">STA</td>
+                                        <td class="equipment-parameter-value">${equip.STA.toLocaleString()}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="equipment-parameter">Holy Lv. ${equip.HolyLv}</td>
+                                        <td class="equipment-parameter-value">${equip.HolyEffect} ${(equip.HolyValue / 100).toFixed(1)}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="equipment-parameter">Dark Lv. ${equip.DarkLv}</td>
+                                        <td class="equipment-parameter-value">${equip.DarkEffect} ${equip.DarkValue.toLocaleString()}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="rune-container">
+                                            ${equip.Runes.map((rune, index) => {
+                                                if (rune) {
+                                                    return `
+                                                    <div class="rune">
+                                                        <span class="rune-text">${rune.Text} Lv. ${rune.Lv}</span>
+                                                    </div>
+                                                    `;
+                                                } else {
+                                                    return `
+                                                    <div class="rune-empty">
+                                                        <span class="rune-text">Empty</span>
+                                                    </div>
+                                                    `;
+                                                }
+                                            }).join('')}
+                                        </td>
+                                    </tr>
+                                    <tr class="separator"><td colspan="2"></td></tr>
+                                </table>
+                            </td>
+                            `;
+                        } else {
+                            equipmentTableHtml += `<td class="equipment-cell empty"></td>`;
+                        }
+                    })
+                    equipmentTableHtml += `</tr>`;
+                })
+                
+                equipmentTableHtml += `
+                    </tbody>
+                </table>
+                `;
+
+                // // Vertical equipment table
+                // equipmentDetails.forEach(equip => {
+                //     equipmentTableHtml += `
+                //     <tr>
+                //         <td colspan="2" class="equipment-header">
+                //             <img src="${generateEquipmentIconUrl(equip.IconId)}" alt="${equip.Text}" class="equipment-icon">
+                //             <span class="equipment-name">${equip.Text} +${equip.ReinforcementLv}</span>
+                //         </td>
+                //     </tr>
+                //     <tr class="top">
+                //         <td class="equipment-parameter">
+                //             ${equip.BaseEffectText}
+                //         </td>
+                //         <td class="equipment-parameter-value">
+                //             ${equip.BaseEffect.toLocaleString()}
+                //         </td>
+                //     </tr>
+                //     <tr>
+                //         <td class="equipment-parameter">STR</td>
+                //         <td class="equipment-parameter-value">${equip.STR.toLocaleString()}</td>
+                //         <td class="equipment-parameter">DEX</td>
+                //         <td class="equipment-parameter-value">${equip.DEX.toLocaleString()}</td>
+                //     </tr>
+                //     <tr>
+                //         <td class="equipment-parameter">MAG</td>
+                //         <td class="equipment-parameter-value">${equip.MAG.toLocaleString()}</td>
+                //         <td class="equipment-parameter">STA</td>
+                //         <td class="equipment-parameter-value">${equip.STA.toLocaleString()}</td>
+                //     </tr>
+                //     <tr style="border-top: 1px solid black;">
+                //         <td class="equipment-parameter">Holy Lv. ${equip.HolyLv}</td>
+                //         <td class="equipment-parameter-value">${equip.HolyEffect} ${equip.HolyValue / 100}%</td>
+                //     </tr>
+                //     <tr>
+                //         <td class="equipment-parameter">Dark Lv. ${equip.DarkLv}</td>
+                //         <td class="equipment-parameter-value">${equip.DarkEffect} ${equip.DarkValue.toLocaleString()}</td>
+                //     </tr>
+                //     <tr>
+                //         <td colspan="2" class="rune-container">
+                //             ${equip.Runes.map((rune, index) => {
+                //                 if (rune) {
+                //                     return `
+                //                     <div class="rune">
+                //                         <span class="rune-text">${rune.Text} Lv. ${rune.Lv}</span>
+                //                     </div>
+                //                     `;
+                //                 } else {
+                //                     return `
+                //                     <div class="rune-empty">
+                //                         <span class="rune-text">Empty</span>
+                //                     </div>
+                //                     `;
+                //                 }
+                //             }).join('')}
+                //         </td>
+                //     </tr>
+                //     <tr class="separator"><td colspan="2"></td></tr>
+                //     `;
+                // })
+
                 modalCharacterStats.innerHTML = statsContent;
+                modalCharacterEquipment.innerHTML = equipmentTableHtml;
                 statsModal.style.display = 'block';
             })
 

@@ -486,3 +486,83 @@ button.show-toggle:hover {
     text-align: left;
     /* margin-left: 10px; */
 }
+
+/* ----------------Equipment---------------- */
+.equipment-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 0px;
+}
+
+.equipment-table td {
+    padding: 8px;
+    /* vertical-align: middle; */
+}
+
+.equipment-cell {
+    width: 50%;
+    padding: 8px;
+    vertical-align: top;
+    border: 0px;
+}
+
+.equipment-header {
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    width: 100%;
+}
+
+.equipment-icon {
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+}
+
+.equipment-name {
+    font-weight: bold;
+    vertical-align: middle;
+    width: 100%;
+}
+
+.top {
+    border-top: 2px solid black;
+}
+
+.equipment-parameter {
+    border-left: 0px;
+    border-right: 0px;
+    width: 100%;
+    text-align: left;
+}
+
+.equipment-parameter-value {
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px solid black;
+    width: 100%;
+    text-align: left;
+}
+
+.rune-container {
+    /* display: flex; */
+    margin-right: 8px;
+    border-left: 0px;
+    border-right: 0px;
+}
+
+.rune {
+    margin-bottom: 8px;
+}
+
+.rune-empty {
+    margin-bottom: 8px;
+}
+
+.separator td {
+    border-top: 0px;
+    border-bottom: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    padding-top: 32px;
+}
