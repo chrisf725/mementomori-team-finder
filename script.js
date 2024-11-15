@@ -240,6 +240,7 @@ const characterNames = {
     103: {name: '', imageURL: generateImageURL(103)},
     104: {name: '', imageURL: generateImageURL(104)},
     105: {name: 'Natasha (Chaos)', imageURL: generateImageURL(105), soulColor: 'Chaos'},
+    106: {name: 'Eureka', imageURL: generateImageURL(106), soulColor: 'Azure'},
 }
 
 const rarity = {
