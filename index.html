@@ -41,8 +41,8 @@
         <p>- Choose one or more servers (not selecting anything defaults to having selecting all)</p>
         <p>- Click the "Find Teams" button to get the results</p>
         <p>- Search for a specific teammate with the chosen character to see teams containing those two characters</p>
-        <h2>Update 11/15</h2>
-        <p>- Added Eureka</p>
+        <h2>Update 11/16</h2>
+        <p>- Added filter by rarity</p>
     </div>
     <br>
     <main>
@@ -110,6 +110,32 @@
     <div id="resultsHeader">
         <div id="searchContainer">
             <input type="text" id="searchInput" placeholder="Search for a teammate...">
+        </div>
+        <div id="rarityFilterContainer">
+            <label for="rarityFilter">Filter by Rarity:</label>
+            <select id="rarityFilter">
+                <option value="">All rarities</option>
+                <option value="1">N</option>
+                <option value="2">R</option>
+                <option value="4">R+</option>
+                <option value="8">SR</option>
+                <option value="16">SR+</option>
+                <option value="32">SSR</option>
+                <option value="64">SSR+</option>
+                <option value="128">UR</option>
+                <option value="256">UR+</option>
+                <option value="512">LR</option>
+                <option value="1024">LR+</option>
+                <option value="2048">LR+2</option>
+                <option value="4096">LR+3</option>
+                <option value="8192">LR+4</option>
+                <option value="16384">LR+5</option>
+                <option value="32768">LR+6</option>
+                <option value="65536">LR+7</option>
+                <option value="131072">LR+8</option>
+                <option value="262144">LR+9</option>
+                <option value="524288">LR+10</option>
+            </select>
         </div>
         <div id="selectedCharacterCountContainer"></div>
     </div>
