@@ -1056,25 +1056,51 @@ const renderPaginationControls = (totalItems) => {
     paginationControls.appendChild(nextButton);
 }
 
-const filterResults = (query) => {
-    if (!query) {
-        filteredResults = playerData;
-    } else {
-        filteredResults = playerData.filter(player =>
-            player.characters.some(character => {
-                return characterNames[character.CharacterId]?.name.toLowerCase().includes(query.toLowerCase())
-            })
-        )
-    }
+let searchQuery = '';
+let selectedRarity = '';
+
+function applyFilters() {
+    const selectedCharacterId = [parseInt(dropdownButton.dataset.value)];
+    // console.log(searchQuery);
+
+    filteredResults = playerData.filter(player => {
+        // Rarity filter
+        const hasSelectedCharacter = player.characters.some(characterInfo => {
+            if (selectedRarity === '') {
+                return characterInfo.CharacterId == selectedCharacterId;
+            } else {
+                return characterInfo.CharacterId == selectedCharacterId && characterInfo.RarityFlags == selectedRarity;
+            }
+        })
+
+        // Teammate filter
+        const query = searchQuery.toLowerCase();
+        const hasTeammate = !searchQuery || player.characters.some(character => {
+            const characterName = characterNames[character.CharacterId]?.name;
+            return characterName && characterName.toLowerCase().includes(query.toLowerCase());
+        })
+
+        // If both filters are applied, return true
+        return hasSelectedCharacter && hasTeammate;
+    })
+
     currentPage = 1;
     renderTable(filteredResults, currentPage);
     renderPaginationControls(filteredResults.length);
 }
 
 document.getElementById('searchInput').addEventListener('input', (event) => {
-    const query = event.target.value;
-    filterResults(query);
+    searchQuery = event.target.value;
+    // filterResultsByTeammate(query);
+    console.log(searchQuery);
+    applyFilters();
 })
+
+document.getElementById('rarityFilter').addEventListener('change', function() {
+    selectedRarity = document.getElementById('rarityFilter').value;
+    // filterResultsByRarity();
+    applyFilters();
+});
 
 // Find usage rates of all characters in BL and LL across all regions
 const fetchAllData = async () => {
@@ -1582,7 +1608,12 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         // Render pagination controls
         renderPaginationControls(filteredResults.length);
 
+        searchQuery = '';
+        selectedRarity = '';
         document.getElementById('searchInput').style.display = 'block';
+        document.getElementById('searchInput').value = '';
+        document.getElementById('rarityFilterContainer').style.display = 'block';
+        document.getElementById('rarityFilter').value = '';
 
         let selectedCharacterCount = 0;
         playerData.forEach(player => {

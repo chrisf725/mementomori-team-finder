@@ -95,9 +95,9 @@ main {
     background-color: #d1c1b0;
 }
 
-/* ----------------Search filter and total display---------------- */
+/* ----------------Search filter, rarity filter and total display---------------- */
 #searchInput {
-    width: 30%;
+    width: 37.5%;
     height: 20px;
     padding: 3px;
     display: none;
@@ -117,6 +117,10 @@ main {
 #selectedCharacterCountContainer {
     flex: 1;
     text-align: right;
+}
+
+#rarityFilterContainer {
+    display: none;
 }
 /* ----------------Results Table---------------- */
 table {
