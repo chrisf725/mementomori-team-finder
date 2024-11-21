@@ -321,6 +321,42 @@ const processWorldsData = (data) => {
     return worldsCount;
 }
 
+const regionMap = {
+    '1': 'JP',
+    '2': 'KR',
+    '3': 'ASIA',
+    '4': 'NA',
+    '5': 'EU',
+    '6': 'GLB'
+}
+
+const regionGroupIds = {};
+
+fetch('https://api.mentemori.icu/wgroups')
+    .then(response => response.json())
+    .then(result => {
+        result.data.forEach(item => {
+            const groupId = item.group_id;
+            item.worlds.forEach(world => {
+                console.log(world);
+                // Get first digit of world number
+                const regionCode = world.toString()[0];
+                const region = regionMap[regionCode];
+                if (region) {
+                    if (!regionGroupIds[region]) {
+                        regionGroupIds[region] = new Set();
+                    }
+                    regionGroupIds[region].add(groupId);
+                }
+            })
+        })
+        for (const region in regionGroupIds) {
+            regionGroupIds[region] = Array.from(regionGroupIds[region]);
+        }
+        console.log(regionGroupIds);
+    })
+    .catch(error => console.error('Error fetching world groups:', error));
+
 const generateUrls = (worldsCount) => {
     const urls = [];
     const LL = document.getElementById('LL').checked;
@@ -372,39 +408,15 @@ const generateUrls = (worldsCount) => {
     }
 
     if (LL) {
-        if (KR) {
-            for (let i = 19; i <= 20; i++) {
-                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-            }
+        const selectedRegions = {
+            KR, ASIA, NA, EU, GLB, JP
         }
-    
-        if (ASIA) {
-            for (let i = 21; i <= 22; i++) {
-                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-            }
-        }
-    
-        if (NA) {
-            for (let i = 23; i <= 24; i++) {
-                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-            }
-        }
-    
-        if (EU) {
-            for (let i = 25; i <= 25; i++) {
-                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-            }
-        }
-    
-        if (GLB) {
-            for (let i = 26; i <= 27; i++) {
-                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
-            }
-        }
-    
-        if (JP) {
-            for (let i = 37; i <= 67; i++) {
-                urls.push(`https://api.mentemori.icu/wg/${i}/legend/latest`);
+
+        for (const region in selectedRegions) {
+            if (selectedRegions[region] && regionGroupIds[region]) {
+                regionGroupIds[region].forEach(groupId => {
+                    urls.push(`https://api.mentemori.icu/wg/${groupId}/legend/latest`);
+                })
             }
         }
     }
