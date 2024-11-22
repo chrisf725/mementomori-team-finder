@@ -338,7 +338,7 @@ fetch('https://api.mentemori.icu/wgroups')
         result.data.forEach(item => {
             const groupId = item.group_id;
             item.worlds.forEach(world => {
-                console.log(world);
+                // console.log(world);
                 // Get first digit of world number
                 const regionCode = world.toString()[0];
                 const region = regionMap[regionCode];
@@ -353,7 +353,7 @@ fetch('https://api.mentemori.icu/wgroups')
         for (const region in regionGroupIds) {
             regionGroupIds[region] = Array.from(regionGroupIds[region]);
         }
-        console.log(regionGroupIds);
+        // console.log(regionGroupIds);
     })
     .catch(error => console.error('Error fetching world groups:', error));
 
@@ -409,7 +409,7 @@ const generateUrls = (worldsCount) => {
 
     if (LL) {
         const selectedRegions = {
-            KR, ASIA, NA, EU, GLB, JP
+            JP, KR, ASIA, NA, EU, GLB
         }
 
         for (const region in selectedRegions) {
@@ -420,6 +420,7 @@ const generateUrls = (worldsCount) => {
             }
         }
     }
+    // console.log(urls);
     return urls;
 }
 
@@ -1047,7 +1048,7 @@ function applyFilters() {
 document.getElementById('searchInput').addEventListener('input', (event) => {
     searchQuery = event.target.value;
     // filterResultsByTeammate(query);
-    console.log(searchQuery);
+    // console.log(searchQuery);
     applyFilters();
 })
 
@@ -1307,7 +1308,7 @@ document.getElementById('getTeam').addEventListener('click', async () => {
         return;
     }
     const selectedCharacterId = dropdownButton.dataset.value;
-    console.log(selectedCharacterId);
+    // console.log(selectedCharacterId);
     if (!selectedCharacterId) {
         alert('Please select a character');
         return;
@@ -1364,98 +1365,86 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                 if (response.status === 404)  {
                     console.warn(`Data not available for ${url}`);
                     completedUrls++;
-                    return null;
+                    return {url, data: null};
                 }
                 completedUrls++;
-                return response;
+                const jsonData = await response.json();
+                return {url, data: jsonData};
             } catch (error) {
                 console.error(`Error fetching data for ${url}`, error);
-                return null;
+                return {url, data: null};
             }
         }));
 
-        const data = await Promise.all(responses.map(response => {
-            if (response && response.ok) {
-                return response.json();
-            }
-            return null;
-        }))
+        const validResponses = responses.filter(response => response.data !== null);
+        // const validUrls = validResponses.map(response => response.url);
+        const filteredData = validResponses.map(response => response.data);
 
-        const filteredData = data.filter(item => item !== null);
+        // const data = await Promise.all(responses.map(response => {
+        //     if (response && response.ok) {
+        //         return response.json();
+        //     }
+        //     return null;
+        // }))
+
+        // const filteredData = data.filter(item => item !== null);
+        // console.log(data);
+        // console.log(validResponses);
+        // console.log(validUrls);
 
         // console.log(data);
 
-        const regionMappingBL = {
-            '1': 'Japan',
-            '2': 'Korea',
-            '3': 'Asia',
-            '4': 'America',
-            '5': 'Europe',
-            '6': 'Global'
-        };
-
-        const regionMappingLL = {
-            '19': 'Korea',
-            '20': 'Korea',
-            '21': 'Asia',
-            '22': 'Asia',
-            '23': 'America',
-            '24': 'America',
-            '25': 'Europe',
-            '26': 'Global',
-            '27': 'Global',
-            '37': 'Japan',
-            '38': 'Japan',
-            '39': 'Japan',
-            '40': 'Japan',
-            '41': 'Japan',
-            '42': 'Japan',
-            '43': 'Japan',
-            '44': 'Japan',
-            '45': 'Japan',
-            '46': 'Japan',
-            '47': 'Japan',
-            '48': 'Japan',
-            '49': 'Japan',
-            '50': 'Japan',
-            '51': 'Japan',
-            '52': 'Japan',
-            '53': 'Japan',
-            '54': 'Japan',
-            '55': 'Japan',
-            '56': 'Japan',
-            '57': 'Japan',
-            '58': 'Japan',
-            '59': 'Japan',
-            '60': 'Japan',
-            '61': 'Japan',
-            '62': 'Japan',
-            '63': 'Japan',
-            '64': 'Japan',
-            '65': 'Japan',
-            '66': 'Japan',
-            '67': 'Japan'
-        };
+        const regionNames = {
+            'JP': 'Japan',
+            'KR': 'Korea',
+            'ASIA': 'Asia',
+            'NA': 'America',
+            'EU': 'Europe',
+            'GLB': 'Global'
+        }
 
         // Use a Set to track unique players
-        const uniquePlayers = new Set();
+        // const uniquePlayers = new Set();
         playerData = [];
         const teammateCounts = {};
         const playerTeams = {}; // Mapping of player ID to their teams
         const rarityCounts = {};
-        // const rarityOrder = ['N', 'R', 'R+', 'SR', 'SR+', 'SSR', 'SSR+', 'UR', 'UR+', 'LR', 'LR+', 'LR+2', 'LR+3', 'LR+4', 'LR+5', 'LR+6', 'LR+7', 'LR+8', 'LR+9', 'LR+10'];
+
+        const groupIdToRegionAbbr = {};
+
+        // LL group IDs to region
+        for (const [regionAbbr, groupIds] of Object.entries(regionGroupIds)) {
+            groupIds.forEach(groupId => {
+                if (groupIdToRegionAbbr[groupId]) {
+                    console.warn(`Conflict for groupId ${groupId}: previously mapped to ${groupIdToRegionAbbr[groupId]}, now mapping to ${regionAbbr}`);
+                }
+                groupIdToRegionAbbr[groupId] = regionAbbr;
+            })
+        }
+
+        // BL IDs to region
+        for (const [regionCode, regionAbbr] of Object.entries(regionMap)) {
+            const serverCode = parseInt(regionCode, 10);
+            if (groupIdToRegionAbbr[serverCode]) {
+                console.warn(`Conflict for serverCode ${serverCode}: previously mapped to ${groupIdToRegionAbbr[serverCode]}, now mapping to ${regionAbbr}`);
+            }
+            groupIdToRegionAbbr[serverCode] = regionAbbr;
+        }
 
         filteredData.forEach((apiData, index) => {
             const url = urls[index];
             let region = 'Unknown Region';
+            let groupId;
 
             if (url.includes('/arena/')) {
                 const regionCode = url.match(/https:\/\/api\.mentemori\.icu\/(\d)/)[1];
-                region = regionMappingBL[regionCode] || 'Unknown Region';
+                groupId = parseInt(regionCode, 10);
             } else if (url.includes('/legend/')) {
-                const regionCode = url.match(/https:\/\/api\.mentemori\.icu\/wg\/(\d+)/)[1];
-                region = regionMappingLL[regionCode] || 'Unknown Region';
+                groupId = parseInt(url.match(/https:\/\/api\.mentemori\.icu\/wg\/(\d+)/)[1]);
             }
+            
+            const groupAbbr = groupIdToRegionAbbr[groupId];
+            region = regionNames[groupAbbr] || 'Unknown Region';
 
             apiData.data.forEach(player => {
                 /*
