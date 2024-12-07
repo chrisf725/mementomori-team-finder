@@ -269,6 +269,7 @@ soulColorFilter.addEventListener('change', (event) => {
     populateDropdown(filter);
 });
 
+let flag = 0;
 const worldsEndpoint = 'https://api.mentemori.icu/worlds';
 
 const fetchWorldsData = async () => {
@@ -279,7 +280,21 @@ const fetchWorldsData = async () => {
         }
         const result = await response.json();
         // console.log(result.data);
-        return result.data;
+
+        const removedWorlds = [];
+        const filteredWorldData = result.data.filter(world => {
+            if (!world.ranking) {
+                removedWorlds.push(world.world_id);
+                return false;
+            }
+            return true;
+        });
+
+        if (removedWorlds.length > 0 && flag === 0) {
+            console.log('Unavailable worlds, will be added soon:', removedWorlds);
+            flag = 1;
+        }
+        return filteredWorldData;
     } catch (error) {
         console.error('Error fetching worlds:', error);
         return null;
@@ -1365,29 +1380,28 @@ document.getElementById('getTeam').addEventListener('click', async () => {
                 if (response.status === 404)  {
                     console.warn(`Data not available for ${url}`);
                     completedUrls++;
-                    return {url, data: null};
+                    return null;
                 }
                 completedUrls++;
-                const jsonData = await response.json();
-                return {url, data: jsonData};
+                return response;
             } catch (error) {
                 console.error(`Error fetching data for ${url}`, error);
-                return {url, data: null};
+                return null;
             }
         }));
 
-        const validResponses = responses.filter(response => response.data !== null);
-        // const validUrls = validResponses.map(response => response.url);
-        const filteredData = validResponses.map(response => response.data);
+        // const validResponses = responses.filter(response => response.data !== null);
+        // // const validUrls = validResponses.map(response => response.url);
+        // const filteredData = validResponses.map(response => response.data);
 
-        // const data = await Promise.all(responses.map(response => {
-        //     if (response && response.ok) {
-        //         return response.json();
-        //     }
-        //     return null;
-        // }))
+        const data = await Promise.all(responses.map(response => {
+            if (response && response.ok) {
+                return response.json();
+            }
+            return null;
+        }))
 
-        // const filteredData = data.filter(item => item !== null);
+        const filteredData = data.filter(item => item !== null);
         // console.log(data);
         // console.log(validResponses);
         // console.log(validUrls);
